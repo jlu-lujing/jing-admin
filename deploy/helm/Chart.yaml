@@ -1,0 +1,5 @@
+apiVersion: v2
+name: jing-admin
+description: JingAdmin enterprise console (Axum + React SPA)
+version: 0.1.0
+appVersion: "0.1.0"

@@ -1,0 +1,495 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ============================================================
+   JingAdmin — design system tokens
+   Light: cool paper  |  Dark: deep neutral  |  Themes override
+   chrome vars at runtime via lib/themes applyAppTheme()
+   ============================================================ */
+
+:root {
+  --font-display: "Source Serif 4", ui-serif, Georgia, "Songti SC", serif;
+  --font-sans: "Schibsted Grotesk", ui-sans-serif, system-ui, -apple-system,
+    "PingFang SC", "Microsoft YaHei", sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", monospace;
+
+  /* canvas & surfaces */
+  --c-canvas: #f4f5f7;
+  --c-canvas-deep: #ebedf1;
+  --c-surface: #ffffff;
+  --c-surface-2: #f8f9fb;
+
+  /* ink / foreground */
+  --c-ink: #15181e;
+  --c-ink-soft: #3b4150;
+  --c-ink-mute: #646d80;
+  --c-ink-faint: #99a1b3;
+
+  /* night family — login hero / overlays */
+  --c-night: #0c0e13;
+  --c-night-2: #191d26;
+  --c-night-line: #2a2f3b;
+  --c-night-text: #d3d7e0;
+  --c-night-dim: #8d95a6;
+
+  /* primary — modern azure */
+  --c-ember: #2b52d9;
+  --c-ember-deep: #1e3da6;
+  --c-ember-soft: #e9edfb;
+  --c-ember-glow: #7d97ee;
+
+  /* lines */
+  --c-line: #e3e6ec;
+  --c-line-soft: #eceef2;
+  --c-line-strong: #ccd2dd;
+
+  /* semantic */
+  --c-moss: #12b76a;
+  --c-moss-soft: #d1fae5;
+  --c-saffron: #f79009;
+  --c-saffron-soft: #fef0c7;
+  --c-clay: #f04438;
+  --c-clay-soft: #fee4e2;
+  --c-lagoon: #475467;
+  --c-lagoon-soft: #eceef1;
+  --c-plum: #7f56d9;
+  --c-plum-soft: #e9e4fb;
+
+  /* theme chrome (overridden per-theme by applyAppTheme) */
+  --radius-card: 12px;
+  --radius-btn: 10px;
+  --c-amb1: rgba(11, 99, 246, 0.055);
+  --c-amb2: rgba(77, 141, 255, 0.05);
+  --c-sidebar: var(--c-surface);
+  --c-sidebar-line: var(--c-line);
+  --c-nav-text: var(--c-ink-mute);
+  --c-nav-muted: var(--c-ink-faint);
+  --c-nav-hover: var(--c-canvas-deep);
+  --c-nav-active-bg: var(--c-ember-soft);
+  --c-nav-active-text: var(--c-ink);
+  --c-nav-active-shadow: none;
+  --c-nav-active-icon: var(--c-ember);
+  --c-brand: var(--c-ink);
+  --c-brand-accent: var(--c-ember);
+  --c-stripe: transparent;
+  --c-row: var(--c-surface);
+  --c-row-hover: var(--c-surface-2);
+
+  --c-shadow-soft: 0 1px 2px rgba(16, 24, 40, 0.05),
+    0 2px 4px -2px rgba(16, 24, 40, 0.05);
+  --c-shadow-lift: 0 4px 10px -4px rgba(16, 24, 40, 0.12),
+    0 2px 4px -2px rgba(16, 24, 40, 0.06);
+  --c-shadow-pop: 0 12px 32px -12px rgba(16, 24, 40, 0.16),
+    0 2px 6px -2px rgba(16, 24, 40, 0.06);
+  --c-shadow-ember: 0 6px 16px -8px rgba(43, 82, 217, 0.5);
+
+  --c-tex-opacity: 0.03;
+  color-scheme: light;
+}
+
+.dark {
+  --c-canvas: #0e1014;
+  --c-canvas-deep: #171a20;
+  --c-surface: #14171d;
+  --c-surface-2: #191d24;
+
+  --c-ink: #e7eaef;
+  --c-ink-soft: #a9b1bf;
+  --c-ink-mute: #7e8798;
+  --c-ink-faint: #576072;
+
+  --c-night: #060709;
+  --c-night-2: #12151c;
+  --c-night-line: #22262f;
+  --c-night-text: #d3d7e0;
+  --c-night-dim: #7d8595;
+
+  --c-ember: #7d97ee;
+  --c-ember-deep: #a9bcf7;
+  --c-ember-soft: rgba(125, 151, 238, 0.15);
+  --c-ember-glow: #a5b8f5;
+
+  --c-line: #242932;
+  --c-line-soft: #1d222b;
+  --c-line-strong: #3a4150;
+
+  --c-moss: #3dd68c;
+  --c-moss-soft: rgba(61, 214, 140, 0.13);
+  --c-saffron: #fec84b;
+  --c-saffron-soft: rgba(254, 200, 75, 0.13);
+  --c-clay: #fd604f;
+  --c-clay-soft: rgba(253, 96, 79, 0.13);
+  --c-lagoon: #98a2b3;
+  --c-lagoon-soft: rgba(152, 162, 179, 0.14);
+  --c-plum: #a78bfa;
+  --c-plum-soft: rgba(167, 139, 250, 0.14);
+
+  --c-shadow-soft: 0 1px 2px rgba(0, 0, 0, 0.35),
+    0 2px 6px -2px rgba(0, 0, 0, 0.4);
+  --c-shadow-lift: 0 6px 18px -10px rgba(0, 0, 0, 0.6),
+    0 2px 6px -2px rgba(0, 0, 0, 0.45);
+  --c-shadow-pop: 0 14px 36px -12px rgba(0, 0, 0, 0.6);
+  --c-shadow-ember: 0 6px 16px -8px rgba(125, 151, 238, 0.5);
+
+  --c-tex-opacity: 0.05;
+  color-scheme: dark;
+}
+
+@theme inline {
+  --font-display: var(--font-display);
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
+
+  --color-canvas: var(--c-canvas);
+  --color-canvas-deep: var(--c-canvas-deep);
+  --color-surface: var(--c-surface);
+  --color-surface-2: var(--c-surface-2);
+
+  --color-ink: var(--c-ink);
+  --color-ink-soft: var(--c-ink-soft);
+  --color-ink-mute: var(--c-ink-mute);
+  --color-ink-faint: var(--c-ink-faint);
+
+  --color-night: var(--c-night);
+  --color-night-2: var(--c-night-2);
+  --color-night-line: var(--c-night-line);
+  --color-night-text: var(--c-night-text);
+  --color-night-dim: var(--c-night-dim);
+
+  --color-ember: var(--c-ember);
+  --color-ember-deep: var(--c-ember-deep);
+  --color-ember-soft: var(--c-ember-soft);
+  --color-ember-glow: var(--c-ember-glow);
+
+  --color-line: var(--c-line);
+  --color-line-soft: var(--c-line-soft);
+  --color-line-strong: var(--c-line-strong);
+
+  --color-moss: var(--c-moss);
+  --color-moss-soft: var(--c-moss-soft);
+  --color-saffron: var(--c-saffron);
+  --color-saffron-soft: var(--c-saffron-soft);
+  --color-clay: var(--c-clay);
+  --color-clay-soft: var(--c-clay-soft);
+  --color-lagoon: var(--c-lagoon);
+  --color-lagoon-soft: var(--c-lagoon-soft);
+  --color-plum: var(--c-plum);
+  --color-plum-soft: var(--c-plum-soft);
+
+  --radius-card: var(--radius-card);
+  --shadow-soft: var(--c-shadow-soft);
+  --shadow-lift: var(--c-shadow-lift);
+  --shadow-pop: var(--c-shadow-pop);
+  --shadow-ember: var(--c-shadow-ember);
+}
+
+* {
+  border-color: var(--c-line);
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+html {
+  transition: background-color 0.25s ease;
+}
+
+body {
+  background-color: var(--c-canvas);
+  color: var(--c-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+/* ambient paper texture */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: var(--c-tex-opacity);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ---- scrollbars ---- */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--c-line-strong) transparent;
+}
+*::-webkit-scrollbar {
+  width: 9px;
+  height: 9px;
+}
+*::-webkit-scrollbar-thumb {
+  background: var(--c-line-strong);
+  border-radius: 99px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+*::-webkit-scrollbar-thumb:hover {
+  background: var(--c-ink-faint);
+  background-clip: content-box;
+}
+
+/* ---- selection & focus ---- */
+::selection {
+  background: var(--c-ember-soft);
+  color: var(--c-ember-deep);
+}
+:focus-visible {
+  outline: 2px solid var(--c-ember);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+.num {
+  font-family: var(--font-mono);
+  font-feature-settings: "tnum";
+  letter-spacing: -0.02em;
+}
+
+/* ---- entrance choreography ---- */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes scale-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+@keyframes draw {
+  from {
+    stroke-dashoffset: var(--dash, 1200);
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+@keyframes grow-bar {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes pulse-soft {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.45;
+  }
+}
+
+.anim-rise {
+  animation: rise 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.anim-fade {
+  animation: fade 0.4s ease both;
+}
+.anim-scale {
+  animation: scale-in 0.24s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.anim-spin {
+  animation: spin 0.7s linear infinite;
+}
+.anim-pulse {
+  animation: pulse-soft 1.6s ease-in-out infinite;
+}
+
+.chart-line {
+  stroke-dasharray: var(--dash, 1200);
+  animation: draw 1.4s cubic-bezier(0.65, 0, 0.35, 1) forwards;
+}
+.bar-grow {
+  transform-origin: bottom;
+  animation: grow-bar 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* dotted grid for empty / hero areas */
+.dotgrid {
+  background-image: radial-gradient(circle, var(--c-line-strong) 1px, transparent 1px);
+  background-size: 18px 18px;
+}
+
+/* link-ish */
+a {
+  color: inherit;
+  text-decoration: none;
+}
+button {
+  cursor: pointer;
+  font-family: inherit;
+}
+input,
+select,
+textarea {
+  font-family: inherit;
+}
+
+/* theme transition helpers for large surfaces */
+.theme-fade {
+  transition: background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease;
+}
+
+/* ambient light wash at top of workspace */
+.ambient::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 320px;
+  pointer-events: none;
+  background:
+    radial-gradient(640px 300px at 16% -80px, var(--c-amb1), transparent 70%),
+    radial-gradient(720px 320px at 88% -140px, var(--c-amb2), transparent 70%);
+}
+
+/* Card top accent reveal */
+.card-edge::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  border-radius: 12px 12px 0 0;
+  background: linear-gradient(90deg, var(--c-ember), var(--c-ember-glow), transparent);
+  opacity: 0;
+  transform: scaleX(0.3);
+  transform-origin: left;
+  transition: opacity 0.25s ease, transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.group:hover .card-edge::after,
+.card-edge.group:hover::after {
+  opacity: 1;
+  transform: scaleX(1);
+}
+
+/* Toast progress bar */
+@keyframes toast-progress {
+  from { transform: scaleX(1); }
+  to { transform: scaleX(0); }
+}
+.toast-progress {
+  animation: toast-progress 4.2s linear forwards;
+  transform-origin: left;
+}
+
+@keyframes slide-in-right {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+.anim-slide-in {
+  animation: slide-in-right 0.28s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes shimmer {
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -200% 0;
+  }
+}
+.skeleton-shimmer {
+  background: linear-gradient(
+    90deg,
+    var(--c-canvas-deep) 25%,
+    color-mix(in srgb, var(--c-canvas-deep) 55%, var(--c-surface)) 45%,
+    var(--c-canvas-deep) 65%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s linear infinite;
+}
+
+@keyframes ping-soft {
+  0% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+  75%,
+  100% {
+    transform: scale(2.2);
+    opacity: 0;
+  }
+}
+.anim-ping {
+  animation: ping-soft 1.6s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+@keyframes progress-sweep {
+  0% {
+    transform: translateX(-100%) scaleX(0.35);
+  }
+  50% {
+    transform: translateX(25%) scaleX(0.55);
+  }
+  100% {
+    transform: translateX(105%) scaleX(0.3);
+  }
+}
+.progress-bar {
+  animation: progress-sweep 1.15s ease-in-out infinite;
+}
+
+@media print {
+  body::before,
+  .ambient::before {
+    display: none;
+  }
+  main {
+    overflow: visible !important;
+  }
+  .anim-rise,
+  .anim-fade {
+    animation: none !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

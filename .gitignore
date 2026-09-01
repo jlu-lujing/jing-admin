@@ -1,0 +1,27 @@
+# Rust build artifacts
+/target/
+
+# Frontend
+web/node_modules/
+web/dist/
+web/*.log
+
+# Runtime data (SQLite db, WAL/SHM, uploads — auto-seeded on first boot)
+/data/
+
+# Local tooling artifacts
+/.openchamber/
+
+# Environment & secrets
+.env
+.env.*
+*.pem
+
+# Editor / OS
+.DS_Store
+*.swp
+.idea/
+.vscode/
+
+# Logs
+*.log

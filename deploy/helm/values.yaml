@@ -1,0 +1,26 @@
+image:
+  repository: jing-admin
+  tag: latest
+replicaCount: 2
+jwtSecret: ""        # 必填，或指向既有 Secret
+existingJwtSecret: ""
+databaseUrl: "sqlite://./data/jing_admin.db?mode=rwc"
+auditRetentionDays: "180"
+service:
+  port: 9800
+ingress:
+  enabled: true
+  className: nginx
+  host: admin.example.com
+  tls: []
+resources:
+  requests: { cpu: 100m, memory: 128Mi }
+  limits: { cpu: "1", memory: 512Mi }
+autoscaling:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 8
+  targetCPU: 70
+persistence:
+  enabled: false      # 换 SQLite 时开 PVC；PG 模式保持 false
+  size: 5Gi

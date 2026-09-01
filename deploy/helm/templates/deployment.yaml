@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata: { name: {{ .Release.Name }} }
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels: { app: {{ .Release.Name }} }
+  template:
+    metadata:
+      labels: { app: {{ .Release.Name }} }
+    spec:
+      containers:
+        - name: jing-admin
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          ports: [{ containerPort: {{ .Values.service.port }} }]
+          env:
+            - name: DATABASE_URL
+              value: {{ .Values.databaseUrl | quote }}
+            - name: AUDIT_RETENTION_DAYS
+              value: {{ .Values.auditRetentionDays | quote }}
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.existingJwtSecret | default (printf "%s-jwt" .Release.Name) }}
+                  key: JWT_SECRET
+          readinessProbe:
+            httpGet: { path: /api/health, port: 9800 }
+            initialDelaySeconds: 3
+          livenessProbe:
+            httpGet: { path: /api/health, port: 9800 }
+            periodSeconds: 15
+          resources: {{- toYaml .Values.resources | nindent 12 }}
+---
+apiVersion: v1
+kind: Secret
+metadata: { name: {{ .Release.Name }}-jwt }
+type: Opaque
+stringData:
+  JWT_SECRET: {{ .Values.jwtSecret | quote }}

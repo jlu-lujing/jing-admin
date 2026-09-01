@@ -1,0 +1,28 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: jingadmin
+      POSTGRES_USER: jing
+      POSTGRES_PASSWORD: ${PG_PASSWORD:-jing-dev-2026}
+    volumes: [pgdata:/var/lib/postgresql/data]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U jing"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  admin:
+    build: .
+    ports: ["9800:9800"]
+    environment:
+      DATABASE_URL: postgres://jing:${PG_PASSWORD:-jing-dev-2026}@db:5432/jingadmin
+      JWT_SECRET: ${JWT_SECRET:?必须设置 JWT_SECRET}
+      AUDIT_RETENTION_DAYS: "180"
+    depends_on:
+      db: { condition: service_healthy }
+    volumes: [uploads:/app/data/uploads]
+
+volumes:
+  pgdata:
+  uploads:
