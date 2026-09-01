@@ -1,26 +1,34 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
+import { LanguageSwitcher } from "./components/LanguageSwitcher";
 
 export function App() {
+  const { t } = useTranslation(["common", "dashboard"]);
   const [visitors] = useState(1024);
   const [orders] = useState(87);
 
   return (
     <div className="app">
       <header>
-        <h1>京 后台管理系统</h1>
+        <h1>{t("common:appTitle")}</h1>
+        <LanguageSwitcher />
       </header>
       <main>
-        <h2>欢迎回来，管理员</h2>
+        <h2>{t("dashboard:welcome")}</h2>
         <section>
-          <h3>今日数据概览</h3>
+          <h3>{t("dashboard:statsTitle")}</h3>
           <ul>
-            <li>今日访客: {visitors}</li>
-            <li>今日订单: {orders}</li>
+            <li>
+              {t("dashboard:visitors")}: {visitors}
+            </li>
+            <li>
+              {t("dashboard:orders")}: {orders}
+            </li>
           </ul>
-          <button type="button">刷新数据</button>
+          <button type="button">{t("dashboard:refresh")}</button>
         </section>
       </main>
-      <footer>© 2026 Jing Admin</footer>
+      <footer>{t("common:footer")}</footer>
     </div>
   );
 }
