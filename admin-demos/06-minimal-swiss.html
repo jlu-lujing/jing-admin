@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Minimal Swiss Admin</title>
+<style>
+  :root{--ink:#111;--mut:#8a8a8a;--line:#ddd;--accent:#e63329;--bg:#fff}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font:14px/1.5 "Helvetica Neue",Helvetica,Arial,"PingFang SC","Microsoft YaHei",sans-serif;
+    -webkit-font-smoothing:antialiased}
+  .wrap{max-width:1200px;margin:0 auto;padding:0 28px}
+  /* top rule */
+  .top{display:flex;justify-content:space-between;align-items:baseline;padding:22px 0 14px;border-bottom:1px solid var(--ink)}
+  .wordmark{font-size:15px;font-weight:700;letter-spacing:.22em;text-transform:uppercase}
+  .meta{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--mut)}
+  nav{display:flex;gap:34px;padding:14px 0;border-bottom:1px solid var(--line);font-size:12px;letter-spacing:.12em;text-transform:uppercase}
+  nav a{color:var(--mut);text-decoration:none}
+  nav a.on{color:var(--ink);border-bottom:2px solid var(--accent);padding-bottom:3px}
+  nav a:hover{color:var(--ink)}
+  /* hero numbers */
+  .hero{display:grid;grid-template-columns:repeat(4,1fr);border-bottom:1px solid var(--ink);margin-bottom:0}
+  .cell{padding:34px 24px 30px 0;border-right:1px solid var(--line)}
+  .cell:last-child{border-right:0}
+  .cell .k{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--mut);margin-bottom:16px}
+  .cell .v{font-size:clamp(38px,5vw,64px);font-weight:700;letter-spacing:-.045em;line-height:.95}
+  .cell .v sup{font-size:15px;font-weight:400;letter-spacing:0;vertical-align:super;margin-left:4px;color:var(--mut)}
+  .cell .n{margin-top:14px;font-size:12px;color:var(--mut);max-width:200px}
+  .pos{color:var(--accent)}
+  /* section */
+  section{border-bottom:1px solid var(--ink);padding:38px 0}
+  .sec-h{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:26px}
+  .sec-h h2{font-size:12px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;margin:0}
+  .idx{font-size:11px;color:var(--mut);letter-spacing:.14em}
+  .grid{display:grid;grid-template-columns:2fr 1fr;gap:48px}
+  /* line chart */
+  .chart{width:100%;height:260px}
+  .ticks{display:flex;justify-content:space-between;font-size:11px;color:var(--mut);margin-top:10px;letter-spacing:.08em}
+  /* keyval list */
+  .kv{display:flex;justify-content:space-between;padding:14px 0;border-bottom:1px solid var(--line);font-size:13px}
+  .kv:first-child{border-top:1px solid var(--ink)}
+  .kv b{font-weight:700}
+  .bar-list .row{margin-bottom:18px}
+  .row .lab{display:flex;justify-content:space-between;font-size:12px;margin-bottom:7px}
+  .row .lab span:first-child{letter-spacing:.06em}
+  .row .t{height:2px;background:var(--line)}
+  .row .t i{display:block;height:2px;background:var(--ink)}
+  /* table */
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  caption{text-align:left;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--mut);padding-bottom:12px}
+  th{text-align:left;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--mut);font-weight:500;
+    padding:0 16px 10px 0;border-bottom:1px solid var(--ink)}
+  td{padding:15px 16px 15px 0;border-bottom:1px solid var(--line);vertical-align:top}
+  tbody tr:hover td{background:#f7f7f7}
+  .num{font-variant-numeric:tabular-nums;font-feature-settings:"tnum"}
+  .dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:8px;vertical-align:1px}
+  .d1{background:#111}.d2{background:#e63329}.d3{background:#bbb}
+  .rowlink{color:var(--ink);text-decoration:none;border-bottom:1px solid var(--ink)}
+  /* split panel */
+  .cols3{display:grid;grid-template-columns:repeat(3,1fr);gap:40px}
+  .mini h3{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--mut);margin:0 0 14px;font-weight:500}
+  .big-n{font-size:30px;font-weight:700;letter-spacing:-.03em}
+  ul.plain{list-style:none;padding:0;margin:0;font-size:13px}
+  ul.plain li{padding:10px 0;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:12px}
+  ul.plain li span:last-child{color:var(--mut);font-variant-numeric:tabular-nums}
+  .filters{display:flex;gap:22px;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--mut)}
+  .filters b{color:var(--ink);font-weight:500}
+  footer{padding:26px 0 60px;display:flex;justify-content:space-between;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--mut)}
+  @media(max-width:940px){.hero{grid-template-columns:repeat(2,1fr)}.grid,.cols3{grid-template-columns:1fr;gap:34px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <div class="wordmark">Atlas&nbsp;/&nbsp;Control</div>
+    <div class="meta">Report 04 — 2024 Q2 — Berlin</div>
+  </div>
+  <nav>
+    <a class="on" href="#">Overview</a><a href="#">Cohorts</a><a href="#">Revenue</a><a href="#">Ops</a><a href="#">Docs</a><a href="#">Archive</a>
+    <span style="margin-left:auto"><b style="font-weight:500;color:#111">Signed in: J. Lu</b></span>
+  </nav>
+
+  <div class="hero">
+    <div class="cell"><div class="k">Revenue</div><div class="v num">428<sup>910</sup></div><div class="n">Gross bookings, CNY, excluding tax.</div></div>
+    <div class="cell"><div class="k">Orders</div><div class="v num">3 241</div><div class="n">Paid orders settled in period.</div></div>
+    <div class="cell"><div class="k">Net retention</div><div class="v num">112<span class="pos">%</span></div><div class="n">Trailing twelve months.</div></div>
+    <div class="cell"><div class="k">Open incidents</div><div class="v num">02</div><div class="n">Both below severity threshold.</div></div>
+  </div>
+
+  <section>
+    <div class="sec-h">
+      <h2>Figure 01 — Bookings trend</h2>
+      <div class="idx">Scale: thousands CNY / 12 months</div>
+    </div>
+    <div class="grid">
+      <div>
+        <svg class="chart" viewBox="0 0 700 260" preserveAspectRatio="none">
+          <g stroke="#ddd"><line x1="0" y1="65" x2="700" y2="65"/><line x1="0" y1="130" x2="700" y2="130"/><line x1="0" y1="195" x2="700" y2="195"/></g>
+          <polyline points="0,205 64,180 128,190 192,140 256,150 320,110 384,125 448,90 512,105 576,70 640,80 700,45"
+            fill="none" stroke="#111" stroke-width="2"/>
+          <polyline points="0,232 64,225 128,220 192,205 256,210 320,190 384,196 448,175 512,182 576,160 640,168 700,150"
+            fill="none" stroke="#bbb" stroke-width="1.5" stroke-dasharray="5 4"/>
+          <circle cx="700" cy="45" r="4" fill="#e63329"/>
+        </svg>
+        <div class="ticks"><span>JAN</span><span>MAR</span><span>MAY</span><span>JUL</span><span>SEP</span><span>NOV</span></div>
+      </div>
+      <div>
+        <div class="kv"><span>Current period</span><b class="num">¥ 428 910</b></div>
+        <div class="kv"><span>Previous period</span><b class="num">¥ 381 240</b></div>
+        <div class="kv"><span>Absolute delta</span><b class="num pos">+ ¥ 47 670</b></div>
+        <div class="kv"><span>Relative delta</span><b class="num pos">+ 12.5 %</b></div>
+        <div class="kv"><span>Average order</span><b class="num">¥ 132</b></div>
+        <div class="kv"><span>Refund rate</span><b class="num">1.9 %</b></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-h">
+      <h2>Figure 02 — Channel split</h2>
+      <div class="idx">Share of gross bookings</div>
+    </div>
+    <div class="grid">
+      <div class="bar-list">
+        <div class="row"><div class="lab"><span>Self-serve web</span><span class="num">44 %</span></div><div class="t"><i style="width:44%"></i></div></div>
+        <div class="row"><div class="lab"><span>Sales assisted</span><span class="num">27 %</span></div><div class="t"><i style="width:27%"></i></div></div>
+        <div class="row"><div class="lab"><span>Partners</span><span class="num">17 %</span></div><div class="t"><i style="width:17%"></i></div></div>
+        <div class="row"><div class="lab"><span>Marketplace</span><span class="num">8 %</span></div><div class="t"><i style="width:8%"></i></div></div>
+        <div class="row"><div class="lab"><span>Other</span><span class="num">4 %</span></div><div class="t"><i style="width:4%"></i></div></div>
+      </div>
+      <div>
+        <ul class="plain">
+          <li><span>Checkout completion</span><span>78.4 %</span></li>
+          <li><span>Trials converted</span><span>312</span></li>
+          <li><span>Median time to value</span><span>6 days</span></li>
+          <li><span>Support first reply</span><span>2 h 14 m</span></li>
+          <li><span>Docs articles read</span><span>18 402</span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-h">
+      <h2>Table 01 — Recent settlements</h2>
+      <div class="filters"><span>Region <b>All</b></span><span>Status <b>Settled, Pending</b></span><span>Sort <b>Date, desc</b></span></div>
+    </div>
+    <table>
+      <caption>Excerpt — 6 of 3 241 records</caption>
+      <thead><tr><th style="width:12%">Order</th><th style="width:22%">Customer</th><th style="width:22%">Plan</th><th style="width:14%">Amount</th><th style="width:16%">Status</th><th style="width:14%">Settled</th></tr></thead>
+      <tbody id="tb"></tbody>
+    </table>
+  </section>
+
+  <section>
+    <div class="cols3">
+      <div class="mini">
+        <h3>Reliability</h3>
+        <div class="big-n">99.98<span style="font-size:16px">%</span></div>
+        <ul class="plain"><li><span>Error budget left</span><span>86 %</span></li><li><span>Deploys this week</span><span>14</span></li><li><span>Rollbacks</span><span>1</span></li></ul>
+      </div>
+      <div class="mini">
+        <h3>Team load</h3>
+        <div class="big-n">72<span style="font-size:16px">%</span></div>
+        <ul class="plain"><li><span>Platform</span><span>88 %</span></li><li><span>Growth</span><span>64 %</span></li><li><span>Support</span><span>57 %</span></li></ul>
+      </div>
+      <div class="mini">
+        <h3>Actions required</h3>
+        <div class="big-n">05</div>
+        <ul class="plain"><li><span>Contracts expiring</span><span>2</span></li><li><span>Unpaid invoices</span><span>1</span></li><li><span>Stale API keys</span><span>2</span></li></ul>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <span>Atlas Control — Internal use</span>
+    <span>Generated 2024-06-11 14:03 CET</span>
+  </footer>
+</div>
+
+<script>
+  const data=[
+    ['9841','Ana Ruiz','Pro annual','1 299','d1','Paid','11 JUN'],
+    ['9840','Kento Mori','Team 5 seats','4 500','d2','Pending','11 JUN'],
+    ['9839','Lena Fox','Storage 1 TB','199','d3','Voided','10 JUN'],
+    ['9838','Omar Haddad','Pro monthly','129','d1','Paid','10 JUN'],
+    ['9837','Chen Wei','Support add-on','89','d1','Paid','09 JUN'],
+    ['9836','Priya Nair','Enterprise pilot','12 000','d2','Pending','09 JUN']
+  ];
+  document.getElementById('tb').innerHTML = data.map(r=>
+    '<tr><td class="num">#'+r[0]+'</td><td>'+r[1]+'</td><td>'+r[2]+'</td><td class="num">CNY '+r[3]+'</td>'+
+    '<td><span class="dot '+r[4]+'"></span>'+r[5]+'</td><td class="num">'+r[6]+'</td></tr>').join('');
+</script>
+</body>
+</html>

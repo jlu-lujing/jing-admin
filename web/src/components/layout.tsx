@@ -32,6 +32,7 @@ import { resolveTheme, useTheme, type ThemeMode } from "../lib/theme";
 import { useI18n } from "../lib/i18n";
 import { cn } from "../lib/utils";
 import { Avatar, Badge, Dropdown, IconButton, MenuItem } from "./ui/primitives";
+import { BrandLockup, BrandMark } from "./Brand";
 import { ConfirmDialog } from "./ui/Modal";
 import { CommandPalette } from "./CommandPalette";
 import { ThemePicker } from "./ThemePicker";
@@ -192,18 +193,8 @@ export function AdminLayout() {
         >
           <X className="h-4 w-4" />
         </button>
-        <div className={cn("flex h-16 items-center gap-3 px-5", collapsedEff && "lg:justify-center lg:px-0")}>
-          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[8px] bg-gradient-to-br from-ember-glow to-ember-deep shadow-ember">
-            <span className="font-display text-[16px] leading-none font-extrabold text-white">J</span>
-          </div>
-          {!collapsedEff && (
-            <div className="leading-none">
-              <p className="font-display text-[16px] font-extrabold tracking-tight text-[var(--c-brand)]">
-                Jing<span className="text-[var(--c-brand-accent)]">Admin</span>
-              </p>
-              <p className="mt-0.5 font-sans text-[9.5px] tracking-[0.26em] text-[var(--c-nav-muted)] uppercase">Enterprise Suite</p>
-            </div>
-          )}
+        <div className={cn("flex h-16 items-center px-5", collapsedEff && "lg:justify-center lg:px-0")}>
+          <BrandLockup collapsed={collapsedEff} />
         </div>
 
         <nav className="flex-1 space-y-6 overflow-y-auto px-3 py-5">
@@ -362,11 +353,14 @@ function Topbar({
 
       {/* breadcrumb */}
       <nav className="flex min-w-0 items-center gap-1.5 text-[13px]" aria-label="breadcrumb">
+        <button onClick={() => navigate("/")} className="shrink-0 transition hover:scale-105" title="JingAdmin">
+          <BrandMark size={22} />
+        </button>
         <button
           onClick={() => navigate("/")}
-          className="shrink-0 font-semibold text-ink-mute transition hover:text-ember"
+          className="shrink-0 font-display text-[13.5px] font-bold tracking-tight text-ink transition hover:text-ember"
         >
-          Jing<span className="text-ember">Admin</span>
+          JingAdmin<span className="text-ember">.</span>
         </button>
         {currentGroup && currentGroup.items.length > 1 && (
           <>

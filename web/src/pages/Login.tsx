@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Eye, EyeOff, ArrowRight, ShieldCheck, Zap, Layers, KeyRound } from "lucide-react";
 import { Button, Field, Input } from "../components/ui/primitives";
+import { BrandMark, Wordmark } from "../components/Brand";
 import { toast } from "../components/ui/Toast";
 import { get, post } from "../lib/api";
 import { useAuth } from "../lib/auth";
@@ -125,17 +126,13 @@ export default function Login() {
           }}
         />
 
-        <div className="relative anim-rise">
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-[8px] bg-gradient-to-br from-ember-glow to-ember-deep shadow-ember">
-              <span className="font-display text-[18px] leading-none font-extrabold text-white">J</span>
-            </div>
-            <div className="leading-none">
-              <p className="font-display text-[18px] font-extrabold tracking-tight text-white">
-                Jing<span className="text-ember-glow">Admin</span>
-              </p>
-              <p className="mt-1 text-[10px] tracking-[0.24em] text-night-dim uppercase">Enterprise Suite</p>
-            </div>
+        <div className="relative anim-rise flex items-center gap-3.5">
+          <BrandMark size={44} />
+          <div className="leading-none">
+            <Wordmark size={20} onNight />
+            <p className="mt-1.5 text-[9.5px] font-semibold tracking-[0.3em] text-night-dim uppercase">
+              Enterprise&nbsp;·&nbsp;Console
+            </p>
           </div>
         </div>
 
@@ -194,13 +191,9 @@ export default function Login() {
           </div>
 
           {/* mobile brand */}
-          <div className="mb-9 flex items-center gap-3 lg:hidden">
-            <div className="flex h-10 w-10 items-center justify-center rounded-[8px] bg-gradient-to-br from-ember-glow to-ember-deep shadow-ember">
-              <span className="font-display text-[18px] leading-none font-extrabold text-white">J</span>
-            </div>
-            <p className="font-display text-[18px] font-extrabold tracking-tight text-ink">
-              Jing<span className="text-ember">Admin</span>
-            </p>
+          <div className="mb-9 flex items-center gap-3.5 lg:hidden">
+            <BrandMark size={40} />
+            <Wordmark size={19} />
           </div>
 
           <div className="anim-rise">

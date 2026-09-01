@@ -9,7 +9,7 @@
    ============================================================ */
 
 :root {
-  --font-display: "Source Serif 4", ui-serif, Georgia, "Songti SC", serif;
+  --font-display: "Source Serif 4", "Noto Serif SC", ui-serif, Georgia, "Songti SC", "Source Han Serif SC", serif;
   --font-sans: "Schibsted Grotesk", ui-sans-serif, system-ui, -apple-system,
     "PingFang SC", "Microsoft YaHei", sans-serif;
   --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", monospace;
@@ -64,7 +64,7 @@
   --c-sidebar: var(--c-surface);
   --c-sidebar-line: var(--c-line);
   --c-nav-text: var(--c-ink-mute);
-  --c-nav-muted: var(--c-ink-faint);
+  --c-nav-muted: var(--c-ink-mute);
   --c-nav-hover: var(--c-canvas-deep);
   --c-nav-active-bg: var(--c-ember-soft);
   --c-nav-active-text: var(--c-ink);
@@ -468,6 +468,51 @@ textarea {
 }
 .progress-bar {
   animation: progress-sweep 1.15s ease-in-out infinite;
+}
+
+/* ---- Glass theme (琉璃): translucent surfaces over an ambient gradient ---- */
+[data-preset="glass"] body {
+  background-image:
+    radial-gradient(920px 520px at 6% -6%, color-mix(in srgb, var(--c-ember) 20%, transparent), transparent 62%),
+    radial-gradient(1100px 620px at 96% -2%, color-mix(in srgb, var(--c-ember-glow) 24%, transparent), transparent 66%),
+    radial-gradient(760px 700px at 88% 104%, color-mix(in srgb, var(--c-ember-glow) 16%, transparent), transparent 60%);
+  background-attachment: fixed;
+}
+/* 浅色以白色为主，蓝色只做边缘微光 */
+[data-preset="glass"][data-theme="light"] body {
+  background-image:
+    radial-gradient(920px 520px at 6% -6%, color-mix(in srgb, var(--c-ember) 7%, transparent), transparent 60%),
+    radial-gradient(1100px 620px at 96% -2%, color-mix(in srgb, var(--c-ember-glow) 10%, transparent), transparent 62%),
+    radial-gradient(760px 700px at 88% 104%, color-mix(in srgb, var(--c-ember-glow) 6%, transparent), transparent 58%);
+}
+[data-preset="glass"] aside {
+  background: color-mix(in srgb, var(--c-sidebar) 58%, transparent);
+  -webkit-backdrop-filter: blur(22px) saturate(1.5);
+  backdrop-filter: blur(22px) saturate(1.5);
+}
+[data-preset="glass"] header {
+  background-color: color-mix(in srgb, var(--c-surface) 52%, transparent);
+  -webkit-backdrop-filter: blur(20px) saturate(1.5);
+  backdrop-filter: blur(20px) saturate(1.5);
+}
+[data-preset="glass"] .bg-surface {
+  background-color: color-mix(in srgb, var(--c-surface) 72%, transparent);
+}
+[data-preset="glass"] .bg-canvas {
+  background-color: color-mix(in srgb, var(--c-canvas) 55%, transparent);
+}
+[data-preset="glass"] .rounded-card {
+  background-color: color-mix(in srgb, var(--c-surface) 68%, transparent);
+  -webkit-backdrop-filter: blur(14px) saturate(1.35);
+  backdrop-filter: blur(14px) saturate(1.35);
+}
+[data-preset="glass"] .shadow-pop {
+  -webkit-backdrop-filter: blur(18px) saturate(1.4);
+  backdrop-filter: blur(18px) saturate(1.4);
+}
+[data-preset="glass"] .border-line,
+[data-preset="glass"] .border-line-soft {
+  border-color: color-mix(in srgb, var(--c-line) 65%, transparent);
 }
 
 @media print {

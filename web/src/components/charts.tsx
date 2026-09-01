@@ -1,8 +1,8 @@
 import { useId, useRef, useState } from "react";
 import { cn } from "../lib/utils";
 
-/* 跟随语义 token，明暗与主题色自动联动 */
-const PALETTE = ["var(--c-ember)", "var(--c-plum)", "var(--c-moss)", "var(--c-saffron)", "var(--c-clay)", "var(--c-ink-faint)"];
+/* 品牌同系色阶：蓝 → 雾蓝 → 紫 → 灰蓝，暖色仅作收尾点缀 */
+const PALETTE = ["var(--c-ember)", "var(--c-ember-glow)", "var(--c-plum)", "var(--c-lagoon)", "var(--c-saffron)", "var(--c-ink-faint)"];
 
 function niceStep(raw: number) {
   const mag = 10 ** Math.floor(Math.log10(Math.max(raw, 1)));

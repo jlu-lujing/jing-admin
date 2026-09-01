@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Retro Terminal Admin</title>
+<style>
+  :root{--g:#33ff88;--g2:#12b862;--dim:#1c7a4a;--amber:#ffb000;--red:#ff5f56;--bg:#03090a}
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{margin:0;background:var(--bg);color:var(--g);
+    font:13px/1.55 "IBM Plex Mono","SFMono-Regular",Menlo,Consolas,"Courier New",monospace;
+    text-shadow:0 0 8px rgba(51,255,136,.35)}
+  /* CRT effect layers */
+  body::after{content:"";position:fixed;inset:0;pointer-events:none;
+    background:repeating-linear-gradient(rgba(0,0,0,0) 0 2px,rgba(0,0,0,.28) 2px 4px);}
+  body::before{content:"";position:fixed;inset:0;pointer-events:none;
+    background:radial-gradient(ellipse at center,transparent 55%,rgba(0,0,0,.75) 100%);animation:flick 6s infinite}
+  @keyframes flick{0%,96%,100%{opacity:1}97%{opacity:.82}98%{opacity:.94}}
+  .screen{max-width:1180px;margin:0 auto;padding:18px}
+  .frame{border:1px solid var(--dim);position:relative}
+  .frame .ttl{border-bottom:1px dashed var(--dim);padding:6px 10px;color:var(--g2);letter-spacing:.1em;font-size:11px;display:flex;justify-content:space-between}
+  .bar{display:flex;align-items:center;gap:16px;padding:8px 10px;border:1px solid var(--dim);background:rgba(51,255,136,.05);flex-wrap:wrap;margin-bottom:14px}
+  .bar b{color:var(--amber)}
+  .bar a{color:var(--g2);text-decoration:none;padding:2px 6px;border:1px solid transparent}
+  .bar a:hover{border-color:var(--dim);color:var(--g)}
+  .bar a.on{border-color:var(--g);color:var(--g);background:rgba(51,255,136,.12)}
+  .cur{display:inline-block;width:8px;height:14px;background:var(--g);vertical-align:-2px;animation:blink 1s steps(1) infinite}
+  @keyframes blink{50%{opacity:0}}
+  .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:14px}
+  .kpi{padding:10px}
+  .kpi .k{color:var(--g2);font-size:11px;letter-spacing:.08em}
+  .kpi .v{font-size:26px;margin:4px 0}
+  .kpi .s{font-size:11px;color:var(--dim)}
+  .ascii{white-space:pre;font-size:11px;line-height:1.15;color:var(--dim);overflow:hidden}
+  .two{display:grid;grid-template-columns:1.35fr 1fr;gap:14px;margin-bottom:14px}
+  .body{padding:12px}
+  pre.graph{margin:0;font-size:11px;line-height:1.3;color:var(--g);overflow:auto}
+  table{width:100%;border-collapse:collapse;font-size:12px}
+  th{text-align:left;color:var(--g2);font-weight:400;border-bottom:1px dashed var(--dim);padding:6px 8px;letter-spacing:.06em;font-size:11px}
+  td{padding:6px 8px;border-bottom:1px dotted rgba(28,122,74,.5)}
+  tr:hover td{background:rgba(51,255,136,.08)}
+  .ok{color:var(--g)}.wa{color:var(--amber)}.er{color:var(--red)}.dim{color:var(--dim)}
+  .log{height:200px;overflow:auto;font-size:12px}
+  .log div{white-space:pre}
+  .prompt{color:var(--amber)}
+  .blockbar{display:inline-block;vertical-align:middle}
+  .foot{display:flex;justify-content:space-between;padding:6px 10px;border-top:1px dashed var(--dim);color:var(--dim);font-size:11px}
+  .btn{background:transparent;border:1px solid var(--dim);color:var(--g);font:inherit;padding:4px 10px;cursor:pointer;letter-spacing:.06em}
+  .btn:hover{background:var(--g);color:#03140a;text-shadow:none}
+  input.cmd{background:transparent;border:0;border-bottom:1px solid var(--dim);color:var(--g);font:inherit;width:60%;outline:none;padding:2px 0}
+  .kbd{border:1px solid var(--dim);padding:1px 5px;color:var(--g2)}
+  @media(max-width:900px){.grid{grid-template-columns:repeat(2,1fr)}.two{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="screen">
+  <div class="bar">
+    <b>root@node-01:~#</b>
+    <a class="on" href="#">dash</a><a href="#">procs</a><a href="#">netstat</a><a href="#">auth</a><a href="#">cron</a><a href="#">logs</a>
+    <span style="margin-left:auto" class="dim">TTY1 &nbsp; LOAD 0.42 0.38 0.31 &nbsp; MEM 61% &nbsp; <span id="clock">00:00:00</span></span>
+  </div>
+
+  <div class="grid">
+    <div class="frame kpi"><div class="k">SESSIONS_ACTIVE</div><div class="v" id="sess">0418</div><div class="s">peak 0612 @ 21:14</div></div>
+    <div class="frame kpi"><div class="k">REQ_PER_SEC</div><div class="v" id="rps">2841</div><div class="s">p99 118ms / p50 21ms</div></div>
+    <div class="frame kpi"><div class="k">ERR_RATE_5M</div><div class="v">0.031%</div><div class="s">threshold 0.100%</div></div>
+    <div class="frame kpi"><div class="k">QUEUE_DEPTH</div><div class="v">0007</div><div class="s">workers 24 / max 32</div></div>
+  </div>
+
+  <div class="two">
+    <div class="frame">
+      <div class="ttl"><span>TRAFFIC — LAST 60 MIN (ASCII)</span><span>SCALE 64 CHARS / 100 REQ</span></div>
+      <div class="body"><pre class="graph" id="graph"></pre></div>
+    </div>
+    <div class="frame">
+      <div class="ttl"><span>MOUNTS / RESOURCES</span><span>DF -H</span></div>
+      <div class="body">
+        <div class="k">/dev/sda1 &nbsp;/ &nbsp; 82%</div>
+        <div class="blockbar" id="b1" style="width:100%;margin:3px 0 10px"></div>
+        <div class="k">/dev/sdb1 &nbsp;/var/lib &nbsp; 46%</div>
+        <div class="blockbar" id="b2" style="width:100%;margin:3px 0 10px"></div>
+        <div class="k">tmpfs &nbsp;/dev/shm &nbsp; 11%</div>
+        <div class="blockbar" id="b3" style="width:100%;margin:3px 0 14px"></div>
+        <table>
+          <thead><tr><th>PROC</th><th>CPU</th><th>MEM</th><th>STATE</th></tr></thead>
+          <tbody>
+            <tr><td>api-gateway</td><td>18.4%</td><td>1.2G</td><td class="ok">RUNNING</td></tr>
+            <tr><td>billing-api</td><td>4.1%</td><td>640M</td><td class="ok">RUNNING</td></tr>
+            <tr><td>searchd</td><td>62.7%</td><td>3.8G</td><td class="wa">BUSY</td></tr>
+            <tr><td>worker-mail</td><td>0.2%</td><td>128M</td><td class="ok">IDLE</td></tr>
+            <tr><td>cron-reindex</td><td>0.0%</td><td>0M</td><td class="er">STOPPED</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="two">
+    <div class="frame">
+      <div class="ttl"><span>AUDIT TABLE — SELECT * FROM events ORDER BY ts DESC LIMIT 8</span><span>PSQL</span></div>
+      <div class="body">
+        <table>
+          <thead><tr><th>#</th><th>TIMESTAMP</th><th>ACTOR</th><th>ACTION</th><th>TARGET</th><th>RESULT</th></tr></thead>
+          <tbody id="tb"></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="frame">
+      <div class="ttl"><span>TAIL -F /var/log/app/current</span><span id="hz">60 Hz</span></div>
+      <div class="body"><div class="log" id="log"></div></div>
+    </div>
+  </div>
+
+  <div class="frame" style="margin-bottom:14px">
+    <div class="ttl"><span>COMMAND CONSOLE</span><span>TYPE "help" + ENTER</span></div>
+    <div class="body">
+      <span class="prompt">root@node-01:~#</span> <input class="cmd" id="cmd" autocomplete="off" spellcheck="false" />
+      <div id="out" class="dim" style="margin-top:8px;min-height:44px"></div>
+      <div style="margin-top:6px" class="dim">
+        <button class="btn" onclick="run('top')">top</button>
+        <button class="btn" onclick="run('flush-cache')">flush-cache</button>
+        <button class="btn" onclick="run('rotate-logs')">rotate-logs</button>
+        <button class="btn" onclick="run('who')">who</button>
+        &nbsp;<span class="kbd">CTRL</span>+<span class="kbd">L</span> clears screen
+      </div>
+    </div>
+  </div>
+
+  <div class="frame">
+    <div class="ascii">+------------------------------------------------------------------+
+|  ATLAS OPS TERMINAL v3.2.1   |  UPTIME 214d 06:11  |  KERNEL 6.8  |
++------------------------------------------------------------------+</div>
+    <div class="foot"><span>F1 HELP &nbsp; F2 MENU &nbsp; F5 REFRESH &nbsp; F10 LOGOUT</span><span>ENCODING UTF-8 &nbsp; TERM=xterm-256color</span></div>
+  </div>
+</div>
+
+<script>
+  /* clock */
+  setInterval(()=>{document.getElementById('clock').textContent=new Date().toTimeString().slice(0,8);},1000);
+  /* live numbers */
+  setInterval(()=>{
+    document.getElementById('rps').textContent=(2400+Math.floor(Math.random()*900)).toLocaleString('en-US').replace(',','');
+    document.getElementById('sess').textContent=String(380+Math.floor(Math.random()*180)).padStart(4,'0');
+  },2000);
+  /* ascii block bars */
+  function block(id,pct){
+    const full=Math.round(pct/100*40);
+    let s='';
+    for(let i=0;i<40;i++) s+= i<full ? '█' : '░';
+    const el=document.getElementById(id);
+    el.innerHTML='<span style="color:var(--g)">'+s.slice(0,full)+'</span><span style="color:#0f3f28">'+s.slice(full)+'</span> '+String(pct).padStart(3,' ')+'%';
+  }
+  block('b1',82);block('b2',46);block('b3',11);
+  /* ascii line graph */
+  (function(){
+    const rows=9, cols=58, data=[];
+    for(let x=0;x<cols;x++){
+      const v=4+Math.sin(x/4)*2.4+Math.random()*1.6;
+      data.push(Math.max(0.4,Math.min(rows-0.6,v)));
+    }
+    let out='';
+    for(let y=rows-1;y>=0;y--){
+      let line='';
+      for(let x=0;x<cols;x++){
+        const d=data[x];
+        line += Math.abs(d-y)<0.5 ? '*' : (d>y && y>rows-4 ? '·' : (d>y?' ':' '));
+      }
+      out += (y===Math.floor(rows/2)?'120 |':'   |') + line + '\n';
+    }
+    out += '    +'+'-'.repeat(cols)+'\n      00:00'+' '.repeat(cols-16)+'23:59';
+    document.getElementById('graph').textContent=out;
+  })();
+  /* audit table */
+  const acts=[
+    ['admin','LOGIN','console','ok','OK'],
+    ['jlu','UPDATE','plan:pro-annual','ok','OK'],
+    ['svc-cron','EXPORT','orders/2024-06.csv','ok','OK'],
+    ['ana.r','DELETE','api-key/k_8841','wa','SOFT'],
+    ['unknown','LOGIN','console','er','DENIED'],
+    ['dmitri','REFUND','ord#9839','ok','OK'],
+    ['svc-mail','SEND','batch/4412','ok','OK'],
+    ['jlu','ROLE-GRANT','user/omar@corp','wa','PENDING']
+  ];
+  const now=Date.now();
+  const colMap={ok:'ok',wa:'wa',er:'er'};
+  document.getElementById('tb').innerHTML=acts.map((a,i)=>{
+    const t=new Date(now-i*187000).toTimeString().slice(0,8);
+    return '<tr><td class="dim">'+String(8-i).padStart(2,'0')+'</td><td>'+t+'</td><td>'+a[0]+
+      '</td><td>'+a[1]+'</td><td class="dim">'+a[2]+'</td><td class="'+colMap[a[3]]+'">'+a[4]+'</td></tr>';
+  }).join('');
+  /* log stream */
+  const lines=[
+    'ok    GET  /api/v2/orders       200  21ms',
+    'ok    POST /api/v2/checkout     201  88ms',
+    'warn  DB   pool saturated 24/24 wait=412ms',
+    'ok    AUTH token refreshed uid=1042',
+    'err   UP   billing-api timeout after 5000ms',
+    'ok    JOB  reindex shard=3 done in 12.4s',
+    'warn  HTTP rate limit hit ip=203.0.113.9',
+    'ok    GET  /api/v2/metrics      200   6ms',
+    'ok    MQ   ack msg_id=b91f topic=billing'
+  ];
+  const log=document.getElementById('log');
+  let i=0;
+  function emit(){
+    const raw=lines[i++%lines.length];
+    const sp=raw.indexOf(' ');
+    const lvl=raw.slice(0,sp), rest=raw.slice(sp+1);
+    const cls=lvl==='err'?'er':(lvl==='warn'?'wa':'ok');
+    const d=document.createElement('div');
+    d.innerHTML='<span class="dim">'+new Date().toTimeString().slice(0,8)+'</span> <span class="'+cls+'">'+lvl.toUpperCase().padEnd(5,' ')+'</span> '+rest;
+    log.appendChild(d); log.scrollTop=log.scrollHeight;
+    if(log.children.length>80) log.removeChild(log.firstChild);
+  }
+  for(let k=0;k<10;k++) emit();
+  setInterval(emit,1800);
+  /* console */
+  const out=document.getElementById('out');
+  function run(cmd){
+    const c=cmd.trim().toLowerCase();
+    const db={
+      help:'COMMANDS: top | flush-cache | rotate-logs | who | clear | uptime | help',
+      top:'PID   %CPU  %MEM  COMMAND\n 112  18.4   2.1  api-gateway\n 240   4.1   1.1  billing-api\n 318  62.7   6.4  searchd',
+      'flush-cache':'FLUSHED 4,812 keys in 0.31s — OK',
+      'rotate-logs':'app.log -> app.log.1 (compressed 118M -> 9M)',
+      who:'jlu  tty1  21:04\ndmitri  pts/2  20:41\nsvc-cron  -  running since 14d',
+      uptime:'up 214 days, 6:11, 2 users, load averages: 0.42 0.38 0.31',
+      clear:''
+    };
+    if(c==='clear'){out.textContent='';return;}
+    out.textContent = db[c] !== undefined ? db[c] : 'sh: command not found: '+c;
+  }
+  const cmd=document.getElementById('cmd');
+  cmd.addEventListener('keydown',e=>{
+    if(e.key==='Enter'){run(cmd.value);cmd.value='';}
+    if(e.key==='l'&&e.ctrlKey){e.preventDefault();out.textContent='';}
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Admin Demo Gallery / 10 Styles</title>
+<style>
+  :root{--bg:#f5f6f8;--ink:#161b22;--mut:#6b7280;--line:#e5e7eb;--acc:#2563eb}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif}
+  .wrap{max-width:1120px;margin:0 auto;padding:48px 24px}
+  h1{font-size:30px;margin:0 0 6px}
+  p.sub{color:var(--mut);margin:0 0 32px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}
+  a.card{display:block;background:#fff;border:1px solid var(--line);border-radius:10px;padding:18px 20px;text-decoration:none;color:inherit;transition:.15s}
+  a.card:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(16,24,40,.08);border-color:var(--acc)}
+  .num{font:600 12px/1 ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--acc);letter-spacing:.1em}
+  h3{margin:8px 0 4px;font-size:17px}
+  .desc{color:var(--mut);font-size:13px;margin:0}
+  .tags{margin-top:12px;display:flex;flex-wrap:wrap;gap:6px}
+  .tag{font-size:11px;padding:2px 8px;border-radius:999px;background:#eef2ff;color:#3730a3}
+  footer{margin-top:40px;color:var(--mut);font-size:12px;text-align:center}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Admin Dashboard Demos</h1>
+  <p class="sub">10 种不同风格的后台管理页面 Demo，单文件、无外部依赖、无 emoji（图标全部内联 SVG）。</p>
+  <div class="grid">
+    <a class="card" href="01-classic-light.html"><div class="num">01</div><h3>Classic Light</h3><p class="desc">经典浅色后台：侧边栏 + 卡片 + 数据表格，蓝色主题。</p><div class="tags"><span class="tag">侧边栏</span><span class="tag">表格</span><span class="tag">柱状图</span></div></a>
+    <a class="card" href="02-dark-neon.html"><div class="num">02</div><h3>Dark Neon Cyber</h3><p class="desc">暗色赛博风：霓虹渐变、发光描边、HUD 折线仪表。</p><div class="tags"><span class="tag">暗色</span><span class="tag">霓虹</span><span class="tag">折线图</span></div></a>
+    <a class="card" href="03-neumorphism.html"><div class="num">03</div><h3>Neumorphism</h3><p class="desc">新拟物：双色投影、凸起/凹陷控件、柔和进度环。</p><div class="tags"><span class="tag">软阴影</span><span class="tag">滑块</span><span class="tag">环形图</span></div></a>
+    <a class="card" href="04-glassmorphism.html"><div class="num">04</div><h3>Glassmorphism</h3><p class="desc">毛玻璃：模糊半透明面板叠加流动渐变光斑。</p><div class="tags"><span class="tag">backdrop-filter</span><span class="tag">渐变</span></div></a>
+    <a class="card" href="05-brutalism.html"><div class="num">05</div><h3>Neo-Brutalism</h3><p class="desc">新粗野主义：粗黑边框、硬阴影、撞色、无圆角。</p><div class="tags"><span class="tag">高对比</span><span class="tag">等宽标题</span></div></a>
+    <a class="card" href="06-minimal-swiss.html"><div class="num">06</div><h3>Minimal Swiss</h3><p class="desc">极简瑞士排版：细线网格、大数字、大量留白。</p><div class="tags"><span class="tag">网格</span><span class="tag">黑白</span></div></a>
+    <a class="card" href="07-retro-terminal.html"><div class="num">07</div><h3>Retro Terminal</h3><p class="desc">复古终端：绿字黑底、扫描线、ASCII 边框与日志流。</p><div class="tags"><span class="tag">CRT</span><span class="tag">monospace</span></div></a>
+    <a class="card" href="08-material.html"><div class="num">08</div><h3>Material</h3><p class="desc">Material 风格：应用栏、抽屉导航、浮动按钮、Chip。</p><div class="tags"><span class="tag">Elevation</span><span class="tag">FAB</span></div></a>
+    <a class="card" href="09-enterprise-density.html"><div class="num">09</div><h3>Enterprise Density</h3><p class="desc">企业级密集：面包屑、页签、筛选工具条、分页数据网格。</p><div class="tags"><span class="tag">高密度</span><span class="tag">表单</span></div></a>
+    <a class="card" href="10-pastel-soft.html"><div class="num">10</div><h3>Pastel Soft</h3><p class="desc">柔和马卡龙：奶油底色、胶囊导航、甜甜圈图。</p><div class="tags"><span class="tag">圆润</span><span class="tag">粉彩</span></div></a>
+  </div>
+  <footer>所有页面均为纯 HTML + CSS + 原生 JS，可直接双击在浏览器打开。</footer>
+</div>
+</body>
+</html>

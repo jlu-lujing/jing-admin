@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Neo-Brutalist Admin</title>
+<style>
+  :root{--ink:#0d0d0d;--paper:#fdf6e3;--yel:#ffd60a;--pink:#ff90e8;--grn:#80ed99;--blu:#5bc0ff;--org:#ff7b47;--sh:6px 6px 0 var(--ink)}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--paper);color:var(--ink);
+    font-family:"Arial Black","Helvetica Neue",Arial,"PingFang SC","Microsoft YaHei",sans-serif;
+    background-image:linear-gradient(var(--ink) 1px,transparent 1px),linear-gradient(90deg,var(--ink) 1px,transparent 1px);
+    background-size:100% 38px,38px 100%;background-position:-1px -1px;background-blend-mode:normal}
+  body::before{content:"";position:fixed;inset:0;background:rgba(253,246,227,.86);z-index:-1}
+  .box{border:3px solid var(--ink);background:#fff;box-shadow:var(--sh)}
+  .wrap{max-width:1240px;margin:0 auto;padding:24px}
+  /* marquee bar */
+  .ticker{border:3px solid var(--ink);background:var(--ink);color:var(--yel);overflow:hidden;white-space:nowrap;box-shadow:var(--sh)}
+  .ticker div{display:inline-block;padding:9px 0;animation:mv 18s linear infinite;font-size:12px;letter-spacing:.16em}
+  @keyframes mv{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+  /* header */
+  header{display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:16px;margin:18px 0;background:var(--pink)}
+  .logo{font-size:24px;letter-spacing:-.03em;padding:6px 14px;background:#fff;border:3px solid var(--ink);box-shadow:4px 4px 0 var(--ink)}
+  .btn{border:3px solid var(--ink);background:#fff;padding:9px 14px;font:inherit;font-size:13px;cursor:pointer;box-shadow:4px 4px 0 var(--ink);transition:.08s}
+  .btn:hover{transform:translate(3px,3px);box-shadow:1px 1px 0 var(--ink)}
+  .btn.y{background:var(--yel)}.btn.g{background:var(--grn)}.btn.b{background:var(--blu)}.btn.o{background:var(--org);color:#fff}
+  .sp{flex:1}
+  /* layout */
+  .cols{display:grid;grid-template-columns:220px 1fr;gap:20px}
+  nav.sbox{padding:0;background:#fff}
+  nav.sbox h4{margin:0;padding:12px 14px;background:var(--ink);color:#fff;font-size:12px;letter-spacing:.18em}
+  nav.sbox a{display:block;padding:12px 14px;border-bottom:3px solid var(--ink);text-decoration:none;color:var(--ink);font-size:13px}
+  nav.sbox a:hover{background:var(--yel)}
+  nav.sbox a.on{background:var(--grn)}
+  .stack{display:flex;flex-direction:column;gap:20px}
+  /* kpi */
+  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+  .kpi{padding:16px}
+  .kpi .t{font-size:11px;letter-spacing:.14em;text-transform:uppercase}
+  .kpi .n{font-size:38px;letter-spacing:-.04em;margin:6px 0 8px}
+  .kpi .d{display:inline-block;font-size:11px;padding:3px 8px;border:2px solid var(--ink);background:var(--grn)}
+  .kpi .d.dn{background:var(--org);color:#fff}
+  .c1{background:var(--yel)}.c2{background:var(--blu)}.c3{background:var(--pink)}.c4{background:var(--grn)}
+  /* chart */
+  .card{padding:18px}
+  .card h2{margin:0 0 4px;font-size:19px;letter-spacing:-.02em;text-transform:uppercase}
+  .card .cap{font-size:12px;font-family:Arial,Helvetica,"PingFang SC",sans-serif;font-weight:400;color:#4b4b4b;margin:0 0 16px}
+  .bars{display:flex;gap:12px;align-items:flex-end;height:210px;border-left:3px solid var(--ink);border-bottom:3px solid var(--ink);padding:8px}
+  .bars .b{flex:1;border:3px solid var(--ink);display:flex;align-items:flex-end;color:#fff;font-size:11px;justify-content:center;padding-bottom:4px}
+  .side2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+  /* list */
+  .item{display:flex;align-items:center;gap:12px;padding:12px;border:3px solid var(--ink);margin-bottom:12px;background:#fff;box-shadow:4px 4px 0 var(--ink)}
+  .item .n{width:34px;height:34px;border:3px solid var(--ink);display:grid;place-items:center;font-size:13px;background:var(--yel)}
+  .item .r{margin-left:auto;font-size:13px}
+  /* table */
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th{background:var(--ink);color:#fff;text-align:left;padding:11px;font-size:11px;letter-spacing:.14em;text-transform:uppercase}
+  td{border:3px solid var(--ink);padding:11px;background:#fff}
+  tr:nth-child(even) td{background:#fffdf5}
+  .tag{display:inline-block;border:2px solid var(--ink);padding:2px 8px;font-size:11px}
+  .tag.a{background:var(--grn)}.tag.b{background:var(--yel)}.tag.c{background:var(--org);color:#fff}
+  .big{font-size:64px;line-height:.95;letter-spacing:-.05em}
+  .stamp{display:inline-block;border:3px solid var(--ink);padding:6px 12px;transform:rotate(-4deg);background:var(--yel);font-size:12px;letter-spacing:.2em}
+  .note{background:var(--yel);border:3px dashed var(--ink);padding:14px;font-family:Arial,Helvetica,"PingFang SC",sans-serif;font-weight:400;font-size:13px}
+  footer{margin:24px 0;padding:14px;text-align:center;font-size:12px;background:#fff}
+  @media(max-width:1000px){.cols{grid-template-columns:1fr}.kpis{grid-template-columns:repeat(2,1fr)}.side2{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="ticker"><div>SYSTEM STATUS: ALL GREEN — BUILD #2291 DEPLOYED — QUEUE 04 BACKLOG: 3 — NEW SIGNUPS TODAY: 1,204 — PAGER ONCALL: @DMITRI —&nbsp;&nbsp; SYSTEM STATUS: ALL GREEN — BUILD #2291 DEPLOYED — QUEUE 04 BACKLOG: 3 — NEW SIGNUPS TODAY: 1,204 — PAGER ONCALL: @DMITRI —&nbsp;&nbsp;</div></div>
+
+  <header class="box">
+    <div class="logo">BRUT/ADMIN</div>
+    <button class="btn y">DASHBOARD</button>
+    <button class="btn">REPORTS</button>
+    <button class="btn">AUDIT LOG</button>
+    <div class="sp"></div>
+    <button class="btn b">SEARCH</button>
+    <button class="btn o">+ NEW PROJECT</button>
+  </header>
+
+  <div class="cols">
+    <nav class="sbox box">
+      <h4>NAVIGATE</h4>
+      <a class="on" href="#">01 / OVERVIEW</a>
+      <a href="#">02 / ORDERS</a>
+      <a href="#">03 / CUSTOMERS</a>
+      <a href="#">04 / INVENTORY</a>
+      <a href="#">05 / PAYOUTS</a>
+      <a href="#">06 / TEAM</a>
+      <a href="#">07 / PERMISSIONS</a>
+      <a href="#">08 / SETTINGS</a>
+    </nav>
+
+    <div class="stack">
+      <div class="kpis">
+        <div class="box kpi c1"><div class="t">GROSS SALES</div><div class="n">¥428K</div><span class="d">▲ +12.4%</span></div>
+        <div class="box kpi c2"><div class="t">ORDERS</div><div class="n">3,241</div><span class="d">▲ +4.8%</span></div>
+        <div class="box kpi c3"><div class="t">REFUNDS</div><div class="n">1.9%</div><span class="d dn">▼ -0.7%</span></div>
+        <div class="box kpi c4"><div class="t">NEW USERS</div><div class="n">1,086</div><span class="d">▲ +18.0%</span></div>
+      </div>
+
+      <div class="box card">
+        <h2>Monthly Volume</h2>
+        <p class="cap">Bars show paid order count per month. Hover a bar to inspect.</p>
+        <div class="bars">
+          <div class="b" style="height:40%;background:#5bc0ff">40</div>
+          <div class="b" style="height:55%;background:#ffd60a;color:#0d0d0d">55</div>
+          <div class="b" style="height:35%;background:#ff90e8">35</div>
+          <div class="b" style="height:70%;background:#80ed99;color:#0d0d0d">70</div>
+          <div class="b" style="height:62%;background:#ff7b47">62</div>
+          <div class="b" style="height:90%;background:#5bc0ff">90</div>
+          <div class="b" style="height:48%;background:#ffd60a;color:#0d0d0d">48</div>
+          <div class="b" style="height:96%;background:#ff90e8">96</div>
+          <div class="b" style="height:66%;background:#80ed99;color:#0d0d0d">66</div>
+          <div class="b" style="height:44%;background:#ff7b47">44</div>
+        </div>
+      </div>
+
+      <div class="side2">
+        <div class="box card">
+          <h2>Goal 01</h2>
+          <p class="cap">Quarterly revenue target progress.</p>
+          <div class="big">68%</div>
+          <div style="height:26px;border:3px solid var(--ink);margin:14px 0;background:#fff">
+            <div style="width:68%;height:100%;background:repeating-linear-gradient(45deg,var(--ink) 0 8px,transparent 8px 16px),var(--blu)"></div>
+          </div>
+          <span class="stamp">ON TRACK</span>
+        </div>
+        <div class="box card">
+          <h2>Top Regions</h2>
+          <p class="cap">Ranked by settled amount.</p>
+          <div class="item"><div class="n">01</div>EAST CHINA<div class="r">¥128,400</div></div>
+          <div class="item"><div class="n">02</div>SOUTH CHINA<div class="r">¥96,120</div></div>
+          <div class="item" style="box-shadow:4px 4px 0 var(--pink)"><div class="n">03</div>NORTH CHINA<div class="r">¥74,540</div></div>
+          <div class="item"><div class="n">04</div>OVERSEAS<div class="r">¥21,300</div></div>
+        </div>
+      </div>
+
+      <div class="box card">
+        <h2>Order Ledger</h2>
+        <p class="cap">Raw table. No rounded corners were harmed.</p>
+        <table>
+          <thead><tr><th>ID</th><th>CUSTOMER</th><th>SKU</th><th>AMOUNT</th><th>STATE</th></tr></thead>
+          <tbody id="tb"></tbody>
+        </table>
+      </div>
+
+      <div class="note">
+        NOTE TO SELF — this theme uses hard offset shadows and 3px borders only. No blur, no gradients, no soft radius.
+        Typography is doing the heavy lifting. Keep the palette to 5 colors maximum.
+      </div>
+    </div>
+  </div>
+
+  <footer class="box">BRUT/ADMIN v0.1 — BUILT WITH HTML, CSS AND STUBBORN MINIMALISM — NO FRAMEWORK, NO MERCY</footer>
+</div>
+
+<script>
+  const rows=[
+    ['9841','ANA RUIZ','PRO-Y-01','¥1,299','a','PAID'],
+    ['9840','KENTO MORI','TEAM-X-05','¥4,500','b','HOLD'],
+    ['9839','LENA FOX','STO-1TB','¥199','c','FAILED'],
+    ['9838','OMAR HADDAD','PRO-M-01','¥129','a','PAID'],
+    ['9837','CHEN WEI','SUP-ADD','¥89','a','PAID'],
+    ['9836','PRIYA NAIR','ENT-PLT','¥12,000','b','HOLD']
+  ];
+  document.getElementById('tb').innerHTML = rows.map(r=>
+    '<tr><td>#'+r[0]+'</td><td>'+r[1]+'</td><td>'+r[2]+'</td><td>'+r[3]+'</td>'+
+    '<td><span class="tag '+r[4]+'">'+r[5]+'</span></td></tr>').join('');
+</script>
+</body>
+</html>

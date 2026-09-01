@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Glassmorphism Dashboard</title>
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;min-height:100vh;font:14px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;color:#fff;
+    background:#160f2e;overflow-x:hidden}
+  /* animated aurora background */
+  .bg{position:fixed;inset:0;z-index:-1;overflow:hidden;
+    background:linear-gradient(140deg,#1b1035 0%,#0f2140 45%,#2a1030 100%)}
+  .blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.7;animation:fl 20s infinite alternate ease-in-out}
+  .b1{width:520px;height:520px;background:#ff4d8d;top:-140px;left:-120px}
+  .b2{width:480px;height:480px;background:#4d7cff;bottom:-160px;left:22%;animation-delay:-6s}
+  .b3{width:420px;height:420px;background:#3ddad7;top:18%;right:-100px;animation-delay:-11s}
+  .b4{width:340px;height:340px;background:#ffb347;bottom:6%;right:16%;animation-delay:-3s}
+  @keyframes fl{to{transform:translate3d(70px,-50px,0) scale(1.15)}}
+  .glass{background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.18);backdrop-filter:blur(18px) saturate(160%);
+    -webkit-backdrop-filter:blur(18px) saturate(160%);border-radius:22px;box-shadow:0 18px 50px rgba(0,0,0,.28)}
+  .shell{display:grid;grid-template-columns:250px 1fr;gap:22px;max-width:1340px;margin:0 auto;padding:24px}
+  /* sidebar */
+  .side{padding:22px 18px;height:calc(100vh - 48px);position:sticky;top:24px;display:flex;flex-direction:column}
+  .brand{display:flex;align-items:center;gap:12px;padding:4px 8px 20px}
+  .brand .g{width:36px;height:36px;border-radius:12px;background:linear-gradient(135deg,#ff8ac4,#7aa2ff);display:grid;place-items:center;font-weight:800;font-size:13px}
+  .brand b{font-size:16px;letter-spacing:.02em}
+  .menu a{display:flex;align-items:center;gap:12px;padding:11px 14px;border-radius:14px;color:rgba(255,255,255,.75);text-decoration:none;font-size:13.5px;margin-bottom:4px}
+  .menu a:hover{background:rgba(255,255,255,.1);color:#fff}
+  .menu a.on{background:rgba(255,255,255,.2);color:#fff;border:1px solid rgba(255,255,255,.28);box-shadow:0 8px 24px rgba(0,0,0,.2)}
+  .menu svg{width:17px;height:17px}
+  .upsell{margin-top:auto;padding:18px;border-radius:20px;background:linear-gradient(140deg,rgba(255,138,196,.35),rgba(122,162,255,.28));border:1px solid rgba(255,255,255,.25)}
+  .upsell h4{margin:0 0 6px;font-size:14px}
+  .upsell p{margin:0 0 12px;font-size:12px;color:rgba(255,255,255,.8)}
+  .btn{border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.16);color:#fff;padding:9px 16px;border-radius:12px;cursor:pointer;font-size:13px;backdrop-filter:blur(6px)}
+  .btn:hover{background:rgba(255,255,255,.28)}
+  .btn.solid{background:linear-gradient(135deg,#ff6ea9,#7aa2ff);border:0;font-weight:600}
+  /* header */
+  main{display:flex;flex-direction:column;gap:22px;min-width:0}
+  .top{padding:14px 20px;display:flex;align-items:center;gap:16px}
+  .search{display:flex;align-items:center;gap:10px;padding:9px 16px;border-radius:14px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.16);min-width:260px}
+  .search input{border:0;background:transparent;outline:none;color:#fff;width:100%;font-size:13px}
+  .search input::placeholder{color:rgba(255,255,255,.5)}
+  .sp{flex:1}
+  .avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#ffd166,#ff6b6b);display:grid;place-items:center;font-weight:700;font-size:12px}
+  h1{font-size:24px;margin:0}
+  .lead{color:rgba(255,255,255,.7);font-size:13px}
+  /* cards */
+  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
+  .kpi{padding:20px}
+  .kpi .t{font-size:12.5px;color:rgba(255,255,255,.72);display:flex;align-items:center;gap:8px}
+  .kpi .t i{width:8px;height:8px;border-radius:50%;display:block}
+  .kpi .n{font-size:30px;font-weight:700;margin:10px 0 6px;letter-spacing:-.6px}
+  .kpi .s{font-size:12px;color:rgba(255,255,255,.72)}
+  .chip{display:inline-block;padding:2px 9px;border-radius:99px;font-size:11px;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.2)}
+  .grid2{display:grid;grid-template-columns:1.6fr 1fr;gap:20px}
+  .card{padding:22px}
+  .card h3{margin:0 0 2px;font-size:16px}
+  .card .sub{margin:0 0 18px;font-size:12.5px;color:rgba(255,255,255,.65)}
+  /* area chart */
+  .axis{display:flex;justify-content:space-between;font-size:11px;color:rgba(255,255,255,.55);margin-top:6px}
+  /* glass list */
+  .li{display:flex;align-items:center;gap:14px;padding:12px 14px;border-radius:16px;background:rgba(255,255,255,.07);margin-bottom:10px;border:1px solid rgba(255,255,255,.1)}
+  .li:hover{background:rgba(255,255,255,.13)}
+  .li .av{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;font-size:12px;font-weight:700;flex:none}
+  .li .m{min-width:0}
+  .li .m b{display:block;font-size:13.5px}
+  .li .m span{font-size:11.5px;color:rgba(255,255,255,.6)}
+  .li .amt{margin-left:auto;text-align:right;font-size:13px;font-weight:600}
+  /* pill nav */
+  .pills{display:flex;gap:10px;flex-wrap:wrap}
+  .pills button{border:1px solid rgba(255,255,255,.22);background:rgba(255,255,255,.08);color:rgba(255,255,255,.85);padding:8px 16px;border-radius:99px;cursor:pointer;font-size:12.5px}
+  .pills button.on{background:#fff;color:#2b1a4d;font-weight:600;border-color:#fff}
+  /* table */
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th{text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.6);padding:10px 12px;border-bottom:1px solid rgba(255,255,255,.15)}
+  td{padding:13px 12px;border-bottom:1px solid rgba(255,255,255,.08)}
+  tr:hover td{background:rgba(255,255,255,.06)}
+  .pill-status{padding:4px 11px;border-radius:99px;font-size:11.5px;font-weight:600}
+  .s1{background:rgba(61,218,215,.22);border:1px solid rgba(61,218,215,.5)}
+  .s2{background:rgba(255,179,71,.2);border:1px solid rgba(255,179,71,.5)}
+  .s3{background:rgba(255,77,141,.2);border:1px solid rgba(255,77,141,.5)}
+  @media(max-width:1080px){.shell{grid-template-columns:1fr}.side{height:auto;position:static}.kpis{grid-template-columns:repeat(2,1fr)}.grid2{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="bg"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div><div class="blob b4"></div></div>
+
+<div class="shell">
+  <aside class="glass side">
+    <div class="brand"><div class="g">AV</div><b>Aurora</b></div>
+    <nav class="menu">
+      <a class="on" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 12l9-8 9 8M5 10v10h14V10"/></svg>Overview</a>
+      <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 19V6m5 13V9m5 10V4m5 15v-7"/></svg>Insights</a>
+      <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="9" cy="8" r="3"/><path d="M2 20c1.2-3 3.2-4.5 7-4.5S15 17 16 20m3-10h6m-3-3v6"/></svg>Audience</a>
+      <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="15" rx="3"/><path d="M3 10h18M8 3v4"/></svg>Campaigns</a>
+      <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3v18M8 7h6a3 3 0 010 6H9a3 3 0 000 6h7"/></svg>Revenue</a>
+      <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4h16v16H4zM4 10h16M10 4v16"/></svg>Widgets</a>
+      <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M12 3v3m0 12v3M3 12h3m12 0h3M6 6l2 2m8 8 2 2M18 6l-2 2M8 16l-2 2"/></svg>Settings</a>
+    </nav>
+    <div class="upsell">
+      <h4>Aurora Studio</h4><p>Unlimited boards, live collab and 4K exports.</p>
+      <button class="btn solid" style="width:100%">Start free</button>
+    </div>
+  </aside>
+
+  <main>
+    <div class="glass top">
+      <div class="search"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input placeholder="Search boards, reports..." /></div>
+      <div class="sp"></div>
+      <button class="btn">Invite</button>
+      <button class="btn solid">Share</button>
+      <div class="avatar">JL</div>
+    </div>
+
+    <div>
+      <h1>Good afternoon, Jlu</h1>
+      <div class="lead">Here is what happened across your workspace in the last 24 hours.</div>
+    </div>
+
+    <div class="kpis">
+      <div class="glass kpi"><div class="t"><i style="background:#ff8ac4"></i>Revenue</div><div class="n">¥ 214,880</div><div class="s"><span class="chip">▲ 9.1%</span> vs. last week</div></div>
+      <div class="glass kpi"><div class="t"><i style="background:#7aa2ff"></i>Sessions</div><div class="n">82,145</div><div class="s"><span class="chip">▲ 3.6%</span> vs. last week</div></div>
+      <div class="glass kpi"><div class="t"><i style="background:#3ddad7"></i>Sign-ups</div><div class="n">2,306</div><div class="s"><span class="chip">▲ 11.2%</span> vs. last week</div></div>
+      <div class="glass kpi"><div class="t"><i style="background:#ffb347"></i>Churn</div><div class="n">1.8%</div><div class="s"><span class="chip">▼ 0.3%</span> improved</div></div>
+    </div>
+
+    <div class="pills">
+      <button class="on">Last 24 hours</button><button>Last 7 days</button><button>Last 30 days</button><button>Quarter</button><button>Custom range</button>
+    </div>
+
+    <div class="grid2">
+      <div class="glass card">
+        <h3>Engagement flow</h3><p class="sub">Sessions and conversion overlaid</p>
+        <svg viewBox="0 0 640 220" width="100%" height="220" preserveAspectRatio="none">
+          <defs>
+            <linearGradient id="ga" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#ff8ac4" stop-opacity=".7"/><stop offset="100%" stop-color="#ff8ac4" stop-opacity="0"/></linearGradient>
+            <linearGradient id="gb" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#7aa2ff" stop-opacity=".6"/><stop offset="100%" stop-color="#7aa2ff" stop-opacity="0"/></linearGradient>
+          </defs>
+          <path d="M0 170 C60 140 90 150 140 110 C190 70 230 100 290 80 C350 60 390 110 450 85 C510 60 560 30 640 50 L640 220 L0 220Z" fill="url(#ga)"/>
+          <path d="M0 170 C60 140 90 150 140 110 C190 70 230 100 290 80 C350 60 390 110 450 85 C510 60 560 30 640 50" fill="none" stroke="#ff8ac4" stroke-width="3"/>
+          <path d="M0 195 C70 180 120 160 180 155 C240 150 270 120 330 128 C390 136 430 100 490 112 C550 124 590 90 640 96 L640 220 L0 220Z" fill="url(#gb)"/>
+          <path d="M0 195 C70 180 120 160 180 155 C240 150 270 120 330 128 C390 136 430 100 490 112 C550 124 590 90 640 96" fill="none" stroke="#7aa2ff" stroke-width="3"/>
+          <circle cx="450" cy="85" r="5" fill="#fff"/>
+        </svg>
+        <div class="axis"><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span></div>
+      </div>
+
+      <div class="glass card">
+        <h3>Top spenders</h3><p class="sub">This month, by account</p>
+        <div class="li"><div class="av" style="background:linear-gradient(135deg,#ff8ac4,#ff5f9e)">AR</div><div class="m"><b>Ana Ruiz</b><span>Enterprise · Madrid</span></div><div class="amt">¥ 42,100</div></div>
+        <div class="li"><div class="av" style="background:linear-gradient(135deg,#7aa2ff,#4d7cff)">KM</div><div class="m"><b>Kento Mori</b><span>Business · Osaka</span></div><div class="amt">¥ 31,500</div></div>
+        <div class="li"><div class="av" style="background:linear-gradient(135deg,#3ddad7,#12b3ad)">LF</div><div class="m"><b>Lena Fox</b><span>Business · Berlin</span></div><div class="amt">¥ 27,880</div></div>
+        <div class="li"><div class="av" style="background:linear-gradient(135deg,#ffb347,#ff8a00)">OH</div><div class="m"><b>Omar Haddad</b><span>Pro · Dubai</span></div><div class="amt">¥ 18,240</div></div>
+      </div>
+    </div>
+
+    <div class="glass card">
+      <h3>Active campaigns</h3><p class="sub">Delivery status across channels</p>
+      <table>
+        <thead><tr><th>Campaign</th><th>Channel</th><th>Audience</th><th>Reach</th><th>CTR</th><th>Status</th></tr></thead>
+        <tbody id="tb"></tbody>
+      </table>
+    </div>
+  </main>
+</div>
+
+<script>
+  const rows=[
+    ['Summer Launch','Paid social','Look-alike 2%','1.2M','4.8%','s1','Live'],
+    ['Devnewsletter','Email','Subscribers','86K','12.1%','s1','Live'],
+    ['Search Brand','Search','High intent','240K','7.4%','s2','Paused'],
+    ['Retarget Cart','Display','Cart abandoners','310K','2.1%','s3','Budget hit'],
+    ['Partner Co-mark','Referral','Partner list','54K','9.6%','s1','Live']
+  ];
+  document.getElementById('tb').innerHTML=rows.map(r=>
+    '<tr><td><b>'+r[0]+'</b></td><td>'+r[1]+'</td><td>'+r[2]+'</td><td>'+r[3]+'</td><td>'+r[4]+'</td>'+
+    '<td><span class="pill-status '+r[5]+'">'+r[6]+'</span></td></tr>').join('');
+  document.querySelectorAll('.pills button').forEach(b=>b.onclick=()=>{
+    document.querySelectorAll('.pills button').forEach(x=>x.classList.remove('on'));b.classList.add('on');
+  });
+</script>
+</body>
+</html>

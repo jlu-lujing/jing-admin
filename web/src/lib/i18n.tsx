@@ -433,6 +433,8 @@ const EN: Record<string, string> = {
   "琥珀": "Amber",
   "玫瑰": "Rose",
   "石墨": "Graphite",
+  "琉璃": "Glass",
+  "通透毛玻璃 · 悬浮光影": "Frosted Glass · Floating Light",
   "两步验证 (TOTP)": "Two-Factor (TOTP)",
   "两步验证已开启": "2FA enabled",
   "两步验证已关闭": "2FA disabled",

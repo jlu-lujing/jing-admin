@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Material Admin</title>
+<style>
+  :root{
+    --primary:#6750a4;--primary-c:#7f67be;--on-prim:#fff;--pri-con:#fffbfe;
+    --secondary:#625b71;--surface:#fffbfe;--surface2:#f7f2fa;--surface3:#eee8f0;
+    --on-surf:#1d1b20;--on-var:#49454f;--outline:#79747e;--outline-v:#cac4d0;
+    --tertiary:#7d5260;--ok:#146c2e;--warn:#8a5d00;--err:#b3261e;--errc:#f9dedc;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--surface2);color:var(--on-surf);
+    font:14px/1.5 Roboto,"Helvetica Neue","Segoe UI","PingFang SC","Microsoft YaHei",sans-serif}
+  .elev1{box-shadow:0 1px 2px rgba(0,0,0,.2),0 1px 3px 1px rgba(0,0,0,.08)}
+  .elev2{box-shadow:0 1px 2px rgba(0,0,0,.24),0 2px 6px 2px rgba(0,0,0,.1)}
+  .elev3{box-shadow:0 4px 8px 3px rgba(0,0,0,.1),0 1px 3px rgba(0,0,0,.2)}
+  /* app bar */
+  .appbar{position:sticky;top:0;z-index:20;background:var(--primary);color:var(--on-prim);
+    display:flex;align-items:center;gap:16px;padding:0 16px;height:64px}
+  .iconbtn{width:40px;height:40px;border-radius:50%;border:0;background:transparent;color:inherit;display:grid;place-items:center;cursor:pointer}
+  .iconbtn:hover{background:rgba(255,255,255,.14)}
+  .appbar h1{font-size:18px;font-weight:400;margin:0}
+  .appbar .srch{margin-left:auto;background:rgba(255,255,255,.16);border-radius:28px;padding:0 16px;display:flex;align-items:center;gap:10px;height:44px;min-width:300px}
+  .appbar .srch input{border:0;background:transparent;outline:none;color:#fff;width:100%;font-size:14px}
+  .appbar .srch input::placeholder{color:rgba(255,255,255,.8)}
+  /* drawer */
+  .layout{display:grid;grid-template-columns:280px 1fr}
+  .drawer{background:var(--surface);padding:8px 12px 24px;min-height:calc(100vh - 64px)}
+  .mnav a{display:flex;align-items:center;gap:12px;padding:0 16px;height:56px;border-radius:28px;text-decoration:none;color:var(--on-surf);font-size:14px;margin-bottom:2px}
+  .mnav a:hover{background:var(--surface3)}
+  .mnav a.on{background:var(--primary);color:var(--pri-con);font-weight:500}
+  .mnav svg{width:24px;height:24px;opacity:.8}
+  .subhead{padding:16px 16px 8px;font-size:12px;letter-spacing:.4px;color:var(--on-var)}
+  /* content */
+  main{padding:24px 28px 96px}
+  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px;margin-bottom:20px}
+  .card{background:var(--surface);border-radius:12px;overflow:hidden}
+  .card .top{height:6px;background:var(--primary)}
+  .card .in{padding:16px 18px 18px}
+  .card .lbl{font-size:13px;color:var(--on-var)}
+  .card .big{font-size:30px;font-weight:400;margin:6px 0 4px;letter-spacing:-.5px}
+  .chip{display:inline-flex;align-items:center;gap:6px;height:26px;padding:0 10px;border-radius:6px;font-size:12px;
+    background:#e7fbe8;color:var(--ok);border:1px solid #b6f0c2}
+  .chip.down{background:var(--errc);color:var(--err);border-color:#f5b7b1}
+  .chip.neutral{background:var(--surface3);color:var(--on-var);border-color:var(--outline-v)}
+  .row2{display:grid;grid-template-columns:1.7fr 1fr;gap:16px;margin-bottom:20px}
+  .card h2{font-size:16px;font-weight:500;margin:0}
+  .card .sub{color:var(--on-var);font-size:13px;margin:2px 0 16px}
+  .cardhead{display:flex;align-items:center;justify-content:space-between;padding:16px 18px 8px}
+  /* segmented */
+  .segment{display:inline-flex;border:1px solid var(--outline);border-radius:20px;overflow:hidden;height:34px}
+  .segment button{border:0;background:transparent;padding:0 14px;font-size:13px;color:var(--on-var);cursor:pointer}
+  .segment button.on{background:var(--surface3);color:var(--primary);font-weight:500}
+  /* chart */
+  .legend{display:flex;gap:18px;font-size:13px;color:var(--on-var);padding:6px 18px 16px}
+  .legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px}
+  /* list items */
+  .listitem{display:flex;align-items:center;gap:16px;padding:12px 18px;border-bottom:1px solid var(--surface3)}
+  .listitem .lead{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;font-size:13px;font-weight:500;color:#fff;flex:none}
+  .listitem .txt b{display:block;font-weight:500;font-size:14px}
+  .listitem .txt span{font-size:13px;color:var(--on-var)}
+  .listitem .trail{margin-left:auto;text-align:right;font-size:13px;color:var(--on-var)}
+  /* table */
+  table{width:100%;border-collapse:collapse;font-size:14px}
+  th{text-align:left;color:var(--on-var);font-weight:500;font-size:13px;padding:12px 18px;border-bottom:1px solid var(--outline-v)}
+  td{padding:14px 18px;border-bottom:1px solid var(--surface3)}
+  tr:hover td{background:var(--surface2)}
+  .status{display:inline-flex;align-items:center;gap:6px;font-size:13px}
+  .status i{width:8px;height:8px;border-radius:50%}
+  /* buttons */
+  .btn{border:0;border-radius:20px;height:40px;padding:0 24px;font-size:14px;font-weight:500;cursor:pointer;
+    background:var(--primary);color:var(--pri-con);letter-spacing:.1px;position:relative;overflow:hidden}
+  .btn.tonal{background:#e8def8;color:#1d192b}
+  .btn.text{background:transparent;color:var(--primary)}
+  .btn.outl{background:transparent;border:1px solid var(--outline);color:var(--primary)}
+  .btn:hover{filter:brightness(1.06);box-shadow:0 1px 2px rgba(0,0,0,.25)}
+  .btn:active{transform:translateY(1px)}
+  /* fab */
+  .fab{position:fixed;right:28px;bottom:28px;height:56px;padding:0 20px;border-radius:16px;border:0;cursor:pointer;
+    background:#ffc2a7;color:#412d1f;display:flex;align-items:center;gap:10px;font-size:14px;font-weight:500}
+  /* chips filter row */
+  .filters{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+  .fchip{height:34px;padding:0 14px;border-radius:8px;border:1px solid var(--outline-v);background:var(--surface);
+    font-size:13px;color:var(--on-surf);cursor:pointer;display:inline-flex;align-items:center;gap:8px}
+  .fchip.on{background:#e8def8;border-color:transparent;color:#1d192b;font-weight:500}
+  /* progress */
+  .lin{height:4px;background:var(--surface3);border-radius:2px;overflow:hidden;margin-top:8px}
+  .lin i{display:block;height:100%;background:var(--primary)}
+  .snackbar{position:fixed;left:28px;bottom:28px;background:#322f35;color:#f6edff;padding:14px 18px;border-radius:8px;
+    display:flex;gap:18px;align-items:center;font-size:14px;transform:translateY(140%);transition:.3s}
+  .snackbar.show{transform:translateY(0)}
+  .snackbar button{background:none;border:0;color:#d0bcff;font-weight:500;font-size:14px;cursor:pointer}
+  @media(max-width:1000px){.layout{grid-template-columns:88px 1fr}.drawer .lbltx,.subhead{display:none}.drawer .mnav a{justify-content:center;padding:0}.row2{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header class="appbar elev1">
+  <button class="iconbtn"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M3 6h18v2H3zM3 11h18v2H3zM3 16h18v2H3z"/></svg></button>
+  <h1>Merch Console</h1>
+  <div class="srch"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M15.5 14h-.79l-.28-.27A6.47 6.47 0 0016 9.5 6.5 6.5 0 109.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0A4.5 4.5 0 1114 9.5 4.5 4.5 0 019.5 14z"/></svg><input placeholder="Search inventory and orders"/></div>
+  <button class="iconbtn"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M12 22c1.1 0 2-.9 2-2h-4a2 2 0 002 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4a1.5 1.5 0 00-3 0v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1z"/></svg></button>
+  <button class="iconbtn"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M12 12a4 4 0 100-8 4 4 0 000 8zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg></button>
+</header>
+
+<div class="layout">
+  <aside class="drawer">
+    <nav class="mnav">
+      <a class="on" href="#"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 13h6V4H4zm0 7h6v-5H4zm10 0h6v-9h-6zm0-16v5h6V4z"/></svg><span class="lbltx">Dashboard</span></a>
+      <a href="#"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zm-7 14H7v-2h5zm5-4H7v-2h10zm0-4H7V7h10z"/></svg><span class="lbltx">Orders</span></a>
+      <a href="#"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 4H4a2 2 0 00-2 2v12a2 2 0 002 2h16a2 2 0 002-2V6a2 2 0 00-2-2zm-1 8h-4V7h4z"/></svg><span class="lbltx">Inventory</span></a>
+      <a href="#"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 11c1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3 1.34 3 3 3zm-8 0c1.66 0 3-1.34 3-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5C15 14.17 10.33 13 8 13zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg><span class="lbltx">Customers</span></a>
+      <div class="subhead">Finance</div>
+      <a href="#"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1H6.32c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.32-3.97-4.7-4.4z"/></svg><span class="lbltx">Payouts</span></a>
+      <a href="#"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.35 10.04A7.49 7.49 0 0012 4a7.5 7.5 0 00-6.65 4.04A5.99 5.99 0 000 14c0 3.31 2.69 6 6 6h13a5 5 0 00.35-9.96z"/></svg><span class="lbltx">Reports</span></a>
+      <div class="subhead">System</div>
+      <a href="#"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.14 12.94c.04-.3.06-.61.06-.94s-.02-.64-.07-.94l2.03-1.58a.5.5 0 00.12-.64l-1.92-3.32a.5.5 0 00-.6-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54A.5.5 0 0013.8 2h-3.6a.5.5 0 00-.5.42l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96a.5.5 0 00-.6.22L2.81 8.84a.5.5 0 00.12.64l2.03 1.58c-.05.3-.07.63-.07.94s.02.64.07.94l-2.03 1.58a.5.5 0 00-.12.64l1.92 3.32c.14.24.42.34.68.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.25.42.5.42h3.6c.25 0 .45-.18.5-.42l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.26.12.54.02.68-.22l1.92-3.32a.5.5 0 00-.12-.64zM12 15.5a3.5 3.5 0 110-7 3.5 3.5 0 010 7z"/></svg><span class="lbltx">Settings</span></a>
+    </nav>
+    <div class="subhead">STORAGE</div>
+    <div style="padding:0 16px;font-size:13px;color:var(--on-var)">12.4 GB of 20 GB used</div>
+    <div class="lin" style="margin:10px 16px 0"><i style="width:62%"></i></div>
+    <button class="btn text" style="margin:14px 0 0 4px">Buy more</button>
+  </aside>
+
+  <main>
+    <div class="filters">
+      <button class="fchip on">All regions</button>
+      <button class="fchip">Today</button>
+      <button class="fchip">Low stock</button>
+      <button class="fchip">Priority support</button>
+      <button class="fchip">+ Add filter</button>
+    </div>
+
+    <div class="cards">
+      <div class="card elev1"><div class="top"></div><div class="in">
+        <div class="lbl">Today revenue</div><div class="big">¥ 18,420</div>
+        <span class="chip">▲ 12% <span style="opacity:.7">vs. yesterday</span></span>
+      </div></div>
+      <div class="card elev1"><div class="top" style="background:#79d0b8"></div><div class="in">
+        <div class="lbl">Fulfilled orders</div><div class="big">312</div>
+        <span class="chip">▲ 4% <span style="opacity:.7">vs. yesterday</span></span>
+      </div></div>
+      <div class="card elev1"><div class="top" style="background:#e8b4bc"></div><div class="in">
+        <div class="lbl">Returned</div><div class="big">17</div>
+        <span class="chip down">▼ 2% <span style="opacity:.8">vs. yesterday</span></span>
+      </div></div>
+      <div class="card elev1"><div class="top" style="background:#c0b3e8"></div><div class="in">
+        <div class="lbl">Avg. basket</div><div class="big">¥ 246</div>
+        <span class="chip neutral">flat <span style="opacity:.8">vs. last week</span></span>
+      </div></div>
+    </div>
+
+    <div class="row2">
+      <div class="card elev1">
+        <div class="cardhead">
+          <div><h2>Sales performance</h2><p class="sub">Last 8 weeks, net of refunds</p></div>
+          <div class="segment"><button>Week</button><button class="on">Month</button><button>Year</button></div>
+        </div>
+        <svg viewBox="0 0 620 220" width="100%" height="220">
+          <g stroke="#e3dceb" stroke-width="1"><line x1="0" y1="55" x2="620" y2="55"/><line x1="0" y1="110" x2="620" y2="110"/><line x1="0" y1="165" x2="620" y2="165"/></g>
+          <g fill="#6750a4">
+            <rect x="20" y="120" width="42" height="80" rx="4"/><rect x="95" y="90" width="42" height="110" rx="4"/>
+            <rect x="170" y="140" width="42" height="60" rx="4"/><rect x="245" y="60" width="42" height="140" rx="4"/>
+            <rect x="320" y="105" width="42" height="95" rx="4"/><rect x="395" y="40" width="42" height="160" rx="4"/>
+            <rect x="470" y="80" width="42" height="120" rx="4" fill="#7f67be"/><rect x="545" y="25" width="42" height="175" rx="4" fill="#9a82db"/>
+          </g>
+          <g font-size="12" fill="#49454f" font-family="Roboto,Arial">
+            <text x="26" y="215">W1</text><text x="101" y="215">W2</text><text x="176" y="215">W3</text><text x="251" y="215">W4</text>
+            <text x="326" y="215">W5</text><text x="401" y="215">W6</text><text x="476" y="215">W7</text><text x="551" y="215">W8</text>
+          </g>
+        </svg>
+        <div class="legend"><span><i style="background:#6750a4"></i>Net sales</span><span><i style="background:#9a82db"></i>Current week</span></div>
+      </div>
+
+      <div class="card elev1">
+        <div class="cardhead"><div><h2>Team activity</h2><p class="sub">Live presence</p></div></div>
+        <div class="listitem"><div class="lead" style="background:#6750a4">MC</div><div class="txt"><b>Mira Chen</b><span>Editing product catalog</span></div><div class="trail">now</div></div>
+        <div class="listitem"><div class="lead" style="background:#7d5260">DK</div><div class="txt"><b>Dmitri K.</b><span>Refunding #9839</span></div><div class="trail">2m</div></div>
+        <div class="listitem"><div class="lead" style="background:#146c2e">SL</div><div class="txt"><b>Sara Lund</b><span>Publishing campaign</span></div><div class="trail">9m</div></div>
+        <div class="listitem"><div class="lead" style="background:#8a5d00">TA</div><div class="txt"><b>Tomo Aoki</b><span>Offline</span></div><div class="trail">3h</div></div>
+      </div>
+    </div>
+
+    <div class="card elev1">
+      <div class="cardhead">
+        <div><h2>Inventory alerts</h2><p class="sub">Items below reorder point</p></div>
+        <div style="display:flex;gap:8px"><button class="btn outl">Export</button><button class="btn tonal">Restock all</button></div>
+      </div>
+      <table>
+        <thead><tr><th>Sku</th><th>Product</th><th>On hand</th><th>Reorder point</th><th>Lead time</th><th>Status</th></tr></thead>
+        <tbody id="tb"></tbody>
+      </table>
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 18px;color:var(--on-var);font-size:13px">
+        <span>Rows per page: 10</span><span>1–5 of 42 &nbsp;&nbsp; &lt; &nbsp; &gt;</span>
+      </div>
+    </div>
+  </main>
+</div>
+
+<button class="fab elev3" onclick="sb.classList.add('show');setTimeout(()=>sb.classList.remove('show'),2600)">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6z"/></svg> Quick add
+</button>
+<div class="snackbar" id="sb"><span>Draft product created.</span><button onclick="sb.classList.remove('show')">DISMISS</button></div>
+
+<script>
+  const rows=[
+    ['SKU-1042','Ceramic mug 350ml',12,60,'7 days','bad','Critical'],
+    ['SKU-2210','Linen tote bag',34,40,'12 days','wa','Low'],
+    ['SKU-3391','Sticker pack',5,25,'4 days','bad','Critical'],
+    ['SKU-4820','Steel bottle 750ml',48,45,'15 days','ok','Healthy'],
+    ['SKU-5577','Notebook A5 dotted',21,30,'9 days','wa','Low']
+  ];
+  const col={bad:'#b3261e',wa:'#8a5d00',ok:'#146c2e'};
+  document.getElementById('tb').innerHTML=rows.map(r=>
+    '<tr><td style="font-variant-numeric:tabular-nums">'+r[0]+'</td><td>'+r[1]+'</td><td>'+r[2]+'</td><td>'+r[3]+'</td><td>'+r[4]+'</td>'+
+    '<td><span class="status"><i style="background:'+col[r[5]]+'"></i>'+r[6]+'</span></td></tr>').join('');
+  document.querySelectorAll('.segment button').forEach(b=>b.onclick=()=>{
+    b.parentNode.querySelectorAll('button').forEach(x=>x.classList.remove('on'));b.classList.add('on');
+  });
+  document.querySelectorAll('.fchip').forEach(b=>b.onclick=()=>b.classList.toggle('on'));
+</script>
+</body>
+</html>

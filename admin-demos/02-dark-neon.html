@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Dark Neon Cyber Console</title>
+<style>
+  :root{
+    --bg0:#05070f;--bg1:#0a0f1e;--panel:rgba(16,23,42,.72);--line:rgba(120,200,255,.16);
+    --cyan:#22d3ee;--mag:#f472b6;--vio:#a78bfa;--lime:#a3e635;--amber:#fbbf24;
+    --ink:#dbeafe;--mut:#64748b;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;color:var(--ink);font:14px/1.55 "Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+    background:radial-gradient(1200px 600px at 15% -10%,#12224a 0%,transparent 60%),
+               radial-gradient(900px 500px at 100% 0%,#3a0f4a 0%,transparent 55%),var(--bg0);min-height:100vh}
+  body::before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.35;
+    background-image:linear-gradient(rgba(34,211,238,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(34,211,238,.05) 1px,transparent 1px);
+    background-size:44px 44px}
+  .shell{position:relative;max-width:1320px;margin:0 auto;padding:22px}
+  /* topbar */
+  .bar{display:flex;align-items:center;gap:18px;padding:14px 18px;border:1px solid var(--line);border-radius:14px;
+    background:linear-gradient(90deg,rgba(34,211,238,.07),rgba(244,114,182,.05));backdrop-filter:blur(8px);margin-bottom:20px}
+  .mark{font-family:ui-monospace,Menlo,monospace;font-weight:800;letter-spacing:.28em;font-size:14px;
+    background:linear-gradient(90deg,var(--cyan),var(--mag));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .bar nav{display:flex;gap:4px;margin-left:10px}
+  .bar nav a{color:#94a3b8;text-decoration:none;padding:7px 13px;border-radius:99px;font-size:13px}
+  .bar nav a.on{color:#031017;background:linear-gradient(90deg,var(--cyan),#67e8f9);font-weight:700}
+  .bar nav a:hover{color:var(--cyan)}
+  .sys{margin-left:auto;display:flex;align-items:center;gap:14px;font-family:ui-monospace,Menlo,monospace;font-size:11.5px;color:var(--mut)}
+  .live{display:flex;align-items:center;gap:7px;color:var(--lime)}
+  .live i{width:8px;height:8px;border-radius:99px;background:var(--lime);box-shadow:0 0 12px var(--lime);animation:bl 1.4s infinite}
+  @keyframes bl{50%{opacity:.25}}
+  /* layout */
+  .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+  .kpi,.panel{border:1px solid var(--line);border-radius:16px;background:var(--panel);padding:18px;position:relative;overflow:hidden}
+  .kpi::after{content:"";position:absolute;inset:0;border-radius:16px;padding:1px;pointer-events:none;
+    background:linear-gradient(135deg,rgba(34,211,238,.6),transparent 40%,rgba(244,114,182,.5));
+    -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude}
+  .kpi .lbl{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--mut)}
+  .kpi .v{font-family:ui-monospace,Menlo,monospace;font-size:32px;font-weight:700;margin:6px 0 2px;color:#fff;text-shadow:0 0 22px rgba(34,211,238,.45)}
+  .kpi .d{font-size:12px;color:var(--lime)}
+  .kpi .d.down{color:var(--mag)}
+  .spark{position:absolute;right:0;bottom:0;left:0;opacity:.55;height:52px}
+  .mt{grid-column:span 3}.ms{grid-column:span 1}
+  .head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+  .head h2{margin:0;font-size:14px;letter-spacing:.14em;text-transform:uppercase;color:#cbd5e1}
+  .tabs{display:flex;gap:6px}
+  .tabs button{background:transparent;border:1px solid var(--line);color:var(--mut);border-radius:99px;padding:4px 11px;font-size:11.5px;cursor:pointer}
+  .tabs button.on{color:var(--cyan);border-color:var(--cyan);box-shadow:0 0 14px rgba(34,211,238,.25)}
+  /* gauge rows */
+  .gline{display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:6px}
+  .gline b{font-family:ui-monospace,Menlo,monospace;color:#fff}
+  .track{height:6px;border-radius:99px;background:rgba(148,163,184,.16);margin-bottom:16px;overflow:hidden}
+  .track i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--cyan),var(--vio));box-shadow:0 0 12px rgba(167,139,250,.6)}
+  /* table */
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th{text-align:left;font-family:ui-monospace,Menlo,monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--mut);padding:9px 8px;border-bottom:1px solid var(--line)}
+  td{padding:11px 8px;border-bottom:1px dashed rgba(120,200,255,.12)}
+  tr:hover td{background:rgba(34,211,238,.05)}
+  .mono{font-family:ui-monospace,Menlo,monospace;color:var(--cyan)}
+  .st{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;letter-spacing:.12em;padding:3px 9px;border-radius:4px}
+  .st.ok{color:var(--lime);border:1px solid rgba(163,230,53,.4);background:rgba(163,230,53,.08)}
+  .st.wa{color:var(--amber);border:1px solid rgba(251,191,36,.4);background:rgba(251,191,36,.08)}
+  .st.er{color:var(--mag);border:1px solid rgba(244,114,182,.4);background:rgba(244,114,182,.08)}
+  .btn{border:1px solid var(--cyan);background:rgba(34,211,238,.1);color:var(--cyan);padding:7px 14px;border-radius:8px;cursor:pointer;font-size:12.5px;letter-spacing:.08em}
+  .btn:hover{background:rgba(34,211,238,.22);box-shadow:0 0 18px rgba(34,211,238,.35)}
+  .btn.ghost{border-color:var(--line);color:#94a3b8;background:transparent}
+  /* log */
+  .log{font-family:ui-monospace,Menlo,monospace;font-size:12px;line-height:1.9;color:#7dd3fc;height:190px;overflow:auto}
+  .log .t{color:var(--mut)}.log .w{color:var(--amber)}.log .e{color:var(--mag)}
+  .foot{display:grid;grid-template-columns:2fr 1fr;gap:16px;margin-top:16px}
+  .node{display:flex;align-items:center;gap:12px;padding:11px 12px;border:1px dashed rgba(120,200,255,.18);border-radius:10px;margin-bottom:9px;font-family:ui-monospace,Menlo,monospace;font-size:12px}
+  .node span.s{margin-left:auto}
+  @media(max-width:1100px){.grid{grid-template-columns:repeat(2,1fr)}.mt,.ms{grid-column:span 2}.foot{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="shell">
+  <div class="bar">
+    <div class="mark">NEON//OPS</div>
+    <nav><a class="on" href="#">Console</a><a href="#">Nodes</a><a href="#">Streams</a><a href="#">Vault</a><a href="#">ACL</a></nav>
+    <div class="sys">
+      <span class="live"><i></i>ONLINE</span>
+      <span>UPTIME 41d 07:22</span><span id="clock">--:--:--</span>
+    </div>
+  </div>
+
+  <div class="grid">
+    <div class="kpi">
+      <div class="lbl">Requests / sec</div><div class="v" id="rps">18,402</div><div class="d">▲ 21.4% throughput</div>
+      <svg class="spark" viewBox="0 0 300 60" preserveAspectRatio="none"><path d="M0 45 L30 38 L60 42 L90 25 L120 31 L150 15 L180 24 L210 10 L240 20 L270 6 L300 12" fill="none" stroke="#22d3ee" stroke-width="2"/></svg>
+    </div>
+    <div class="kpi">
+      <div class="lbl">Latency p99</div><div class="v">142<span style="font-size:15px;color:#64748b">ms</span></div><div class="d down">▼ degraded on eu-west-2</div>
+      <svg class="spark" viewBox="0 0 300 60" preserveAspectRatio="none"><path d="M0 20 L30 26 L60 18 L90 34 L120 28 L150 40 L180 30 L210 46 L240 38 L270 50 L300 44" fill="none" stroke="#f472b6" stroke-width="2"/></svg>
+    </div>
+    <div class="kpi">
+      <div class="lbl">Error budget</div><div class="v">73%</div><div class="d">▲ 6h burn 0.4%</div>
+      <svg class="spark" viewBox="0 0 300 60" preserveAspectRatio="none"><path d="M0 40 L40 36 L80 44 L120 30 L160 34 L200 22 L240 28 L300 16" fill="none" stroke="#a3e635" stroke-width="2"/></svg>
+    </div>
+    <div class="kpi">
+      <div class="lbl">Active sessions</div><div class="v">6,588</div><div class="d">▲ 312 new since 00:00</div>
+      <svg class="spark" viewBox="0 0 300 60" preserveAspectRatio="none"><path d="M0 50 L40 44 L80 46 L120 32 L160 36 L200 20 L240 24 L300 8" fill="none" stroke="#a78bfa" stroke-width="2"/></svg>
+    </div>
+
+    <div class="panel mt">
+      <div class="head">
+        <h2>Traffic Matrix</h2>
+        <div class="tabs"><button class="on">24H</button><button>7D</button><button>30D</button></div>
+      </div>
+      <svg viewBox="0 0 700 240" width="100%" height="240" preserveAspectRatio="none">
+        <defs>
+          <linearGradient id="g1" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#22d3ee" stop-opacity=".55"/><stop offset="100%" stop-color="#22d3ee" stop-opacity="0"/></linearGradient>
+          <linearGradient id="g2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#f472b6" stop-opacity=".45"/><stop offset="100%" stop-color="#f472b6" stop-opacity="0"/></linearGradient>
+        </defs>
+        <g stroke="rgba(120,200,255,.12)"><line x1="0" y1="60" x2="700" y2="60"/><line x1="0" y1="120" x2="700" y2="120"/><line x1="0" y1="180" x2="700" y2="180"/></g>
+        <path d="M0 190 C60 150 100 170 150 120 C200 70 240 110 300 90 C360 70 400 130 460 100 C520 70 560 40 620 60 L700 40 L700 240 L0 240Z" fill="url(#g1)"/>
+        <path d="M0 190 C60 150 100 170 150 120 C200 70 240 110 300 90 C360 70 400 130 460 100 C520 70 560 40 620 60 L700 40" fill="none" stroke="#22d3ee" stroke-width="2.5"/>
+        <path d="M0 210 C70 200 110 180 160 170 C220 160 250 140 310 150 C370 160 410 120 470 140 C530 160 580 110 640 120 L700 105 L700 240 L0 240Z" fill="url(#g2)"/>
+        <path d="M0 210 C70 200 110 180 160 170 C220 160 250 140 310 150 C370 160 410 120 470 140 C530 160 580 110 640 120 L700 105" fill="none" stroke="#f472b6" stroke-width="2.5"/>
+        <g font-family="ui-monospace,Menlo,monospace" font-size="11" fill="#64748b">
+          <text x="4" y="232">00:00</text><text x="170" y="232">06:00</text><text x="340" y="232">12:00</text><text x="510" y="232">18:00</text><text x="650" y="232">NOW</text>
+        </g>
+      </svg>
+      <div style="display:flex;gap:20px;font-size:12px;color:#94a3b8;margin-top:8px">
+        <span><i style="display:inline-block;width:10px;height:10px;border-radius:3px;background:#22d3ee;margin-right:6px"></i>Ingress</span>
+        <span><i style="display:inline-block;width:10px;height:10px;border-radius:3px;background:#f472b6;margin-right:6px"></i>Egress</span>
+      </div>
+    </div>
+
+    <div class="panel ms">
+      <div class="head"><h2>Cluster</h2></div>
+      <div class="gline"><span>node-01</span><b>72%</b></div><div class="track"><i style="width:72%"></i></div>
+      <div class="gline"><span>node-02</span><b>41%</b></div><div class="track"><i style="width:41%"></i></div>
+      <div class="gline"><span>node-03</span><b>88%</b></div><div class="track"><i style="width:88%"></i></div>
+      <div class="gline"><span>gpu-pool</span><b>55%</b></div><div class="track"><i style="width:55%"></i></div>
+      <div class="gline"><span>edge-cache</span><b>19%</b></div><div class="track"><i style="width:19%"></i></div>
+      <div style="display:flex;gap:8px;margin-top:16px"><button class="btn">Scale</button><button class="btn ghost">Drain</button></div>
+    </div>
+
+    <div class="panel mt">
+      <div class="head"><h2>Incident Feed</h2><button class="btn ghost">Filters</button></div>
+      <table>
+        <thead><tr><th>ID</th><th>Service</th><th>Region</th><th>Severity</th><th>State</th><th>Age</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">INC-4471</td><td>gateway</td><td>ap-southeast</td><td>P1</td><td><span class="st er">FIRING</span></td><td>7m</td></tr>
+          <tr><td class="mono">INC-4470</td><td>billing-api</td><td>eu-west-2</td><td>P2</td><td><span class="st wa">PROBING</span></td><td>24m</td></tr>
+          <tr><td class="mono">INC-4468</td><td>search-index</td><td>us-east-1</td><td>P3</td><td><span class="st ok">RESOLVED</span></td><td>1h 12m</td></tr>
+          <tr><td class="mono">INC-4465</td><td>auth-token</td><td>ap-northeast</td><td>P2</td><td><span class="st ok">RESOLVED</span></td><td>3h 40m</td></tr>
+          <tr><td class="mono">INC-4461</td><td>cdn-edge</td><td>global</td><td>P4</td><td><span class="st wa">MUTED</span></td><td>6h 02m</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="panel ms">
+      <div class="head"><h2>Event Stream</h2></div>
+      <div class="log" id="log"></div>
+    </div>
+  </div>
+
+  <div class="foot">
+    <div class="panel">
+      <div class="head"><h2>Deploy Targets</h2><button class="btn">Rollout</button></div>
+      <div class="node"><span style="color:#22d3ee">[core]</span> api-gateway v2.19.4 <span class="s st ok">HEALTHY</span></div>
+      <div class="node"><span style="color:#a78bfa">[core]</span> ledger-worker v1.8.0 <span class="s st ok">HEALTHY</span></div>
+      <div class="node"><span style="color:#f472b6">[edge]</span> image-resizer v0.9.1 <span class="s st wa">CANARY 25%</span></div>
+      <div class="node"><span style="color:#a3e635">[data]</span> clickhouse-mirror v3.2.7 <span class="s st ok">SYNCING</span></div>
+    </div>
+    <div class="panel">
+      <div class="head"><h2>Quick Actions</h2></div>
+      <button class="btn" style="width:100%;margin-bottom:9px">Purge CDN cache</button>
+      <button class="btn ghost" style="width:100%;margin-bottom:9px">Rotate secrets</button>
+      <button class="btn ghost" style="width:100%;margin-bottom:9px">Snapshot database</button>
+      <button class="btn ghost" style="width:100%">Run chaos probe</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const c=document.getElementById('clock');
+  setInterval(()=>{c.textContent=new Date().toTimeString().slice(0,8);},1000);
+  const rps=document.getElementById('rps');
+  setInterval(()=>{rps.textContent=(17000+Math.floor(Math.random()*3000)).toLocaleString('en-US');},1600);
+  const msgs=[
+    ['t','GET  /v2/stream  200  12ms'],
+    ['t','POST /v2/ingest  202  38ms'],
+    ['w','WARN retry=2 region=eu-west-2'],
+    ['t','CACHE MISS key=usr:8841'],
+    ['e','ERROR upstream timeout svc=gateway'],
+    ['t','HEALTH probe ok node-03'],
+    ['t','AUTH token rotated kid=a91f'],
+    ['w','WARN queue lag 1.8s topic=billing']
+  ];
+  const log=document.getElementById('log');
+  let i=0;
+  function push(){
+    const m=msgs[i++%msgs.length];
+    const line=document.createElement('div');
+    line.innerHTML='<span class="t">['+new Date().toTimeString().slice(0,8)+']</span> <span class="'+m[0]+'">'+m[1]+'</span>';
+    log.appendChild(line); log.scrollTop=log.scrollHeight;
+    if(log.children.length>60) log.removeChild(log.firstChild);
+  }
+  for(let k=0;k<8;k++) push();
+  setInterval(push,1500);
+</script>
+</body>
+</html>

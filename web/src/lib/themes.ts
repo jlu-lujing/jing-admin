@@ -63,7 +63,7 @@ export function baseChrome(c: Core, _mode?: "light" | "dark"): Chrome {
     sidebarBg: c.surface,
     sidebarLine: c.line,
     navText: c.inkMute,
-    navMuted: c.inkFaint,
+    navMuted: c.inkMute,
     navHover: c.canvasDeep,
     navActiveBg: "var(--c-ember-soft)",
     navActiveText: c.ink,
@@ -78,6 +78,45 @@ export function baseChrome(c: Core, _mode?: "light" | "dark"): Chrome {
 
 
 export const THEMES: ThemeDef[] = [
+  {
+    id: "glass",
+    name: "琉璃",
+    tagline: "通透毛玻璃 · 悬浮光影",
+    radius: "18px",
+    btnRadius: "12px",
+    spacing: "0.25rem",
+    shadow: "float",
+    displayFont: SERIF,
+    amb1: "rgba(96,178,255,0.10)",
+    amb2: "rgba(125,211,252,0.09)",
+    chrome: {
+      light: {
+        ...baseChrome({"canvas":"#f9fbfd","canvasDeep":"#eef3f9","surface":"#ffffff","surface2":"#f8fafd","ink":"#1b2940","inkSoft":"#42536e","inkMute":"#6c7c99","inkFaint":"#a3b4d0","line":"#e7edf5","lineSoft":"#f0f4f9","lineStrong":"#d4dfeb"}, "light"),
+        sidebarBg: "rgba(251,253,255,0.60)",
+        sidebarLine: "rgba(255,255,255,0.55)",
+        navActiveBg: "rgba(255,255,255,0.85)",
+        navActiveText: "#17223a",
+        navActiveShadow: "0 4px 14px -6px rgba(23,34,58,0.25)",
+        stripe: "transparent",
+      },
+      dark: {
+        ...baseChrome({"canvas":"#0b0f1a","canvasDeep":"#161d2e","surface":"#151c2c","surface2":"#1a2234","ink":"#e8edf7","inkSoft":"#adb9d2","inkMute":"#7f8caa","inkFaint":"#596582","line":"#232c42","lineSoft":"#1b2335","lineStrong":"#35415e"}, "dark"),
+        sidebarBg: "rgba(17,23,37,0.55)",
+        sidebarLine: "rgba(148,163,199,0.18)",
+        navActiveBg: "rgba(255,255,255,0.10)",
+        navActiveShadow: "0 0 18px rgba(124,194,255,0.25)",
+        stripe: "transparent",
+      },
+    },
+    accent: {
+      light: { ember: "#1a8cff", deep: "#0f6fd6", soft: "#def0ff", glow: "#8fd0ff" },
+      dark: { ember: "#7cc2ff", deep: "#a8d8ff", soft: "rgba(124,194,255,0.14)", glow: "#b5e0ff" },
+    },
+    core: {
+      light: { canvas: "#f9fbfd", canvasDeep: "#eef3f9", surface: "#ffffff", surface2: "#f8fafd", ink: "#1b2940", inkSoft: "#42536e", inkMute: "#6c7c99", inkFaint: "#a3b4d0", line: "#e7edf5", lineSoft: "#f0f4f9", lineStrong: "#d4dfeb" },
+      dark: { canvas: "#0b0f1a", canvasDeep: "#161d2e", surface: "#151c2c", surface2: "#1a2234", ink: "#e8edf7", inkSoft: "#adb9d2", inkMute: "#7f8caa", inkFaint: "#596582", line: "#232c42", lineSoft: "#1b2335", lineStrong: "#35415e" },
+    },
+  },
   {
     id: "azure",
     name: "青墨",
@@ -303,14 +342,14 @@ interface ThemeStore {
 export const useAppTheme = create<ThemeStore>()(
   persist(
     (set, get) => ({
-      themeId: "azure",
+      themeId: "glass",
       setTheme: (themeId) => set({ themeId }),
       cycle: () => {
         const i = THEMES.findIndex((t) => t.id === get().themeId);
         set({ themeId: THEMES[(i + 1) % THEMES.length].id });
       },
     }),
-    { name: "jing-apptheme", partialize: (s) => ({ themeId: s.themeId }) },
+    { name: "jing-apptheme.v2", partialize: (s) => ({ themeId: s.themeId }) },
   ),
 );
 
@@ -322,7 +361,7 @@ const SHADOWS = {
 
 /** 应用整套主题：色彩系统 + 圆角 + 间距密度 + 标题字体 + 阴影层级 */
 export function applyAppTheme() {
-  const def = THEMES.find((t) => t.id === useAppTheme.getState().themeId) ?? THEMES[0];
+  const def = THEMES.find((t) => t.id === useAppTheme.getState().themeId) ?? THEMES.find((t) => t.id === "glass") ?? THEMES[0];
   const mode = resolveTheme(useTheme.getState().mode);
   const a = def.accent[mode];
   const c = def.core[mode];

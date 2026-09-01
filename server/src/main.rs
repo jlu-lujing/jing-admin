@@ -48,6 +48,18 @@ async fn main() {
         tracing::warn!("未设置 JWT_SECRET，使用开发默认密钥，生产环境务必覆盖！");
     }
 
+    // SQLite 文件所在目录可能不存在（如默认的 ./data），先创建，否则建库失败
+    if let Some(rest) = db_url.strip_prefix("sqlite://") {
+        let path = rest.split('?').next().unwrap_or(rest);
+        if !path.is_empty() && path != ":memory:" {
+            if let Some(parent) = std::path::Path::new(path).parent() {
+                if !parent.as_os_str().is_empty() {
+                    std::fs::create_dir_all(parent).ok();
+                }
+            }
+        }
+    }
+
     let pool = db::init_pool(&db_url)
         .await
         .expect("数据库初始化失败");

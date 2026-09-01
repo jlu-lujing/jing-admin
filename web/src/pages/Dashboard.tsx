@@ -107,11 +107,11 @@ export default function Dashboard() {
             </h2>
             <p className="mt-1.5 text-[13.5px] text-ink-mute">{t("系统运行总览与近期关键操作，数据实时来自 Axum 内核。")}</p>
           </div>
-          <div className="flex flex-col items-end gap-2">
-              <span className="num rounded-[8px] border border-line bg-surface/80 px-3 py-1.5 text-[12px] font-medium text-ink-soft shadow-soft backdrop-blur">
+          <div className="flex flex-col items-end gap-1 text-right">
+            <span className="num text-[13px] font-semibold text-ink-soft">
               {new Date().toLocaleDateString(undefined, { month: "long", day: "numeric", weekday: "long" })}
             </span>
-              <span className="num rounded-[8px] border border-line bg-surface/80 px-3 py-1.5 text-[12px] font-medium text-ink-mute shadow-soft backdrop-blur">
+            <span className="num text-[11.5px] tracking-wide text-ink-faint">
               Axum · React 18 · v0.3
             </span>
           </div>
@@ -229,13 +229,13 @@ export default function Dashboard() {
 function MiniSpark({ points }: { points: number[] }) {
   if (points.length < 2) return null;
   const max = Math.max(...points, 1);
-  const w = 96;
-  const h = 30;
+  const w = 72;
+  const h = 26;
   const d = points
     .map((v, i) => `${i === 0 ? "M" : "L"}${((i / (points.length - 1)) * w).toFixed(1)},${(h - (v / max) * (h - 4) - 2).toFixed(1)}`)
     .join(" ");
   return (
-    <svg viewBox={`0 0 ${w} ${h}`} className="h-[30px] w-[96px]" preserveAspectRatio="none">
+    <svg viewBox={`0 0 ${w} ${h}`} className="h-[26px] w-[72px]" preserveAspectRatio="none">
       <path d={`${d} L${w},${h} L0,${h} Z`} style={{ fill: "var(--c-ember)" }} opacity="0.08" />
       <path d={d} fill="none" style={{ stroke: "var(--c-ember)" }} strokeWidth="1.6" strokeLinecap="round" opacity="0.55" />
     </svg>
@@ -251,21 +251,21 @@ function StatCard({ stat, index, spark }: { stat: Stats; index: number; spark?: 
       style={{ animationDelay: `${index * 0.06}s` }}
     >
       <span className="card-edge pointer-events-none absolute inset-x-0 top-0" aria-hidden="true" />
-      <div className="flex items-start justify-between">
-        <div className={cn("flex h-10 w-10 items-center justify-center rounded-xl ring-1 ring-inset ring-black/[0.04] dark:ring-white/[0.06]", TONE_BG[stat.tone])}>
-          <stat.icon className={cn("h-[18px] w-[18px]", TONE_TEXT[stat.tone])} strokeWidth={2.2} />
-        </div>
-        <TrendChip value={stat.trend} />
+      <div className={cn("flex h-10 w-10 items-center justify-center rounded-xl ring-1 ring-inset ring-black/[0.04] dark:ring-white/[0.06]", TONE_BG[stat.tone])}>
+        <stat.icon className={cn("h-[18px] w-[18px]", TONE_TEXT[stat.tone])} strokeWidth={2.2} />
       </div>
       <p className="num mt-5 text-[30px] leading-none font-bold tracking-[-0.04em] text-ink">
         {n.toLocaleString()}
       </p>
-      <p className="mt-2.5 text-[11px] font-semibold tracking-[0.12em] text-ink-mute uppercase">
+      <p className="mt-2.5 text-[12px] font-semibold tracking-wide text-ink-soft">
         {stat.label}
       </p>
-      <div className="mt-1 flex items-end justify-between">
-        <p className="text-[11.5px] text-ink-faint">{stat.foot}</p>
-        {spark && <MiniSpark points={spark} />}
+      <div className="mt-3.5 flex min-h-6 items-center justify-between gap-2 border-t border-line-soft pt-3">
+        <p className="min-w-0 truncate text-[11.5px] text-ink-faint">{stat.foot}</p>
+        <span className="flex shrink-0 items-center gap-2">
+          {spark && <MiniSpark points={spark} />}
+          <TrendChip value={stat.trend} />
+        </span>
       </div>
     </Card>
   );
